@@ -25,11 +25,13 @@ const Tab = createBottomTabNavigator()
 
 export default function App() {
   const { user } = useAuth()
-  const { readData } = useDb()
+  const { readData, updateDataInterval } = useDb()
   const [data, setData] = useState({})
   const [modalVisible, setModalVisible] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [firstRender, setFirstRender] = useState(true)
 
+  // Gathers data required for rendering
   useEffect(() => {
     if (!user) return
     (async () => {
@@ -44,9 +46,13 @@ export default function App() {
         setData(initData)
         setLoading(false)
       }
-
     })()
   }, [user])
+
+  // Initiates background task to update database every 5 minutes
+  useEffect(() => {
+    if (firstRender && user) {updateDataInterval(user); setFirstRender(false)}
+  }, [loading])
 
   if (!user) return (<Login />)
 

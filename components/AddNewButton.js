@@ -79,11 +79,11 @@ export default function AddNewButton(props) {
             >
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
-                        <Text style={[styles.label, isFirstDropdownFocused && { color: 'blue' }]}>
+                        <Text style={styles.label}>
                             Choose to add
                         </Text>
                         <Dropdown
-                            style={[styles.dropdown, isFirstDropdownFocused && { borderColor: 'blue' }]}
+                            style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
                             selectedTextStyle={styles.selectedTextStyle}
                             data={[{ label: 'Task', value: 1 }, { label: 'Group', value: 2 }]}
@@ -102,11 +102,11 @@ export default function AddNewButton(props) {
                         />
                         {firstDropdownValue === 1 ?
                             <>
-                                <Text style={[styles.label, isSecondDropdownFocused && { color: 'blue' }, { top: 73 }]}>
+                                <Text style={[styles.label, { top: 73 }]}>
                                     Choose group
                                 </Text>
                                 <Dropdown
-                                    style={[styles.dropdown, isSecondDropdownFocused && { borderColor: 'blue' }]}
+                                    style={styles.dropdown}
                                     placeholderStyle={styles.placeholderStyle}
                                     selectedTextStyle={styles.selectedTextStyle}
                                     data={groups}
@@ -187,11 +187,12 @@ const styles = StyleSheet.create({
     },
     task_input: {
         fontSize: 20,
-        borderWidth: 1,
         width: '100 %',
         borderRadius: 3,
         padding: 15,
         margin: 20,
+        elevation: 5,
+        backgroundColor: 'white'
     },
     button_container: {
         display: 'flex',
@@ -202,8 +203,9 @@ const styles = StyleSheet.create({
     button: {
         padding: 15,
         backgroundColor: 'blue',
-        borderRadius: 3,
-        width: 100
+        borderRadius: 5,
+        width: 100,
+        elevation: 5
     },
     button_text: {
         color: 'white',
@@ -211,9 +213,7 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     btn_cancel: {
-        backgroundColor: 'transparent',
-        borderWidth: 1,
-        borderColor: 'black'
+        backgroundColor: 'white',
     },
     btn_cancel_text: {
         color: 'black'
@@ -231,12 +231,12 @@ const styles = StyleSheet.create({
     },
     dropdown: {
         height: 50,
-        borderColor: 'gray',
-        borderWidth: 1,
         borderRadius: 3,
         paddingHorizontal: 8,
         width: '100%',
-        marginBottom: 15
+        marginBottom: 15,
+        elevation: 5,
+        backgroundColor: 'white'
     },
     label: {
         position: 'absolute',

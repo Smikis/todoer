@@ -92,25 +92,28 @@ const styles = StyleSheet.create({
         width: '90%'
     },
     confirm_btn: {
-        padding: 10,
+        padding: 15,
         borderRadius: 5,
         borderColor: 'red',
-        borderWidth: 1
+        borderWidth: 1,
+        backgroundColor: 'white',
+        elevation: 5
     },
     confirm_text: {
         color: 'red',
         fontSize: 15
     },
     cancel_btn: {
-        padding: 10
+        padding: 15,
+        backgroundColor: 'white',
+        elevation: 5,
+        borderRadius: 5
     },
     cancel_text: {
         color: 'black',
         fontSize: 15
     },
     input: {
-        borderColor: 'black',
-        borderWidth: 1,
         margin: 15,
         borderRadius: 5,
         padding: 15,

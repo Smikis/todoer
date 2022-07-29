@@ -1,3 +1,5 @@
+import { updateLocalData } from './updateLocalData'
+
 export function toggleDone(itemGroup, data, setData, setForceUpdate, item) {
     const newData = [...data.groups]
     for (let group of newData) {
@@ -12,4 +14,5 @@ export function toggleDone(itemGroup, data, setData, setForceUpdate, item) {
     }
     setData({ 'groups': newData })
     setForceUpdate(newData)
+    updateLocalData({'groups': newData})
 }
