@@ -1,4 +1,5 @@
 import React, {useContext, useState} from 'react';
+
 import {
   StyleSheet,
   Text,
@@ -15,27 +16,39 @@ import {useAuth} from '../hooks/useAuth';
 import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import AppContext from '../contexts/AppContext';
 
-export default function Login() {
-  const {loginUserWithEmailAndPass, loginWithGoogle} = useAuth();
-
+export default function Register() {
   const {TEXT, colors} = useContext(AppContext);
 
   const [inputs, setInputs] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     emailError: null,
     passwordError: null,
+    confirmPasswordError: null,
   });
+
+  const {loginWithGoogle, createUserWithEmailAndPass} = useAuth();
 
   const [loading, setLoading] = useState(false);
 
   function clearErrors() {
-    setInputs(prev => ({...prev, emailError: null, passwordError: null}));
+    setInputs(prev => ({
+      ...prev,
+      passwordError: null,
+      emailError: null,
+      confirmPasswordError: null,
+    }));
   }
 
   function cleanup() {
     clearErrors();
-    setInputs(prev => ({...prev, email: '', password: ''}));
+    setInputs(prev => ({
+      ...prev,
+      password: '',
+      email: '',
+      confirmPassword: '',
+    }));
   }
 
   async function validateInput() {
@@ -53,37 +66,45 @@ export default function Login() {
       }));
       return;
     }
+    if (inputs.password !== inputs.confirmPassword) {
+      setInputs(prev => ({
+        ...prev,
+        confirmPasswordError: TEXT.Validation.Passwords_Dont_Match,
+      }));
+      return;
+    }
 
     setLoading(true);
 
-    const res = await loginUserWithEmailAndPass(inputs.email, inputs.password);
+    const res = await createUserWithEmailAndPass(inputs.email, inputs.password);
 
     switch (res) {
+      case 'auth/email-already-in-use':
+        setInputs(prev => ({
+          ...prev,
+          emailError: TEXT.Validation.Email_In_Use,
+        }));
+        break;
       case 'auth/invalid-email':
         setInputs(prev => ({
           ...prev,
           emailError: TEXT.Validation.Email_Invalid,
         }));
         break;
-      case 'auth/user-not-found':
+      case 'auth/weak-password':
         setInputs(prev => ({
           ...prev,
-          emailError: TEXT.Validation.User_Doesnt_Exist,
-        }));
-        break;
-      case 'auth/wrong-password':
-        setInputs(prev => ({
-          ...prev,
-          passwordError: TEXT.Validation.Wrong_Password,
+          passwordError: TEXT.Validation.Weak_Password,
         }));
         break;
     }
+
     setLoading(false);
   }
 
   return (
     <View style={styles(colors).container}>
-      <Text style={styles(colors).header}>{TEXT.Login.Header}</Text>
+      <Text style={styles(colors).header}>{TEXT.Register.Header}</Text>
       {inputs.emailError && (
         <Text style={styles(colors).error}>{inputs.emailError}</Text>
       )}
@@ -91,13 +112,13 @@ export default function Login() {
         value={inputs.email}
         style={[
           styles(colors).input,
-          {shadowColor: inputs.emailError ? 'red' : 'black'},
+          {shadowColor: inputs.emailError ? colors.Danger : 'black'},
         ]}
         onChangeText={text => setInputs(prev => ({...prev, email: text}))}
         placeholder={TEXT.Placeholders.Email}
-        editable={!loading}
         keyboardType="email-address"
         placeholderTextColor={'grey'}
+        editable={!loading}
         onPressOut={clearErrors}
       />
       {inputs.passwordError && (
@@ -107,13 +128,31 @@ export default function Login() {
         value={inputs.password}
         style={[
           styles(colors).input,
-          {shadowColor: inputs.passwordError ? 'red' : 'black'},
+          {shadowColor: inputs.passwordError ? colors.Danger : 'black'},
         ]}
         onChangeText={text => setInputs(prev => ({...prev, password: text}))}
         placeholder={TEXT.Placeholders.Password}
         secureTextEntry={true}
-        editable={!loading}
         placeholderTextColor={'grey'}
+        editable={!loading}
+        onPressOut={clearErrors}
+      />
+      {inputs.confirmPasswordError && (
+        <Text style={styles(colors).error}>{inputs.confirmPasswordError}</Text>
+      )}
+      <TextInput
+        value={inputs.confirmPassword}
+        style={[
+          styles(colors).input,
+          {shadowColor: inputs.confirmPasswordError ? colors.Danger : 'black'},
+        ]}
+        onChangeText={text =>
+          setInputs(prev => ({...prev, confirmPassword: text}))
+        }
+        placeholder={TEXT.Placeholders.Confirm_Password}
+        secureTextEntry={true}
+        placeholderTextColor={'grey'}
+        editable={!loading}
         onPressOut={clearErrors}
       />
       <Pressable style={styles(colors).login_btn} onPress={validateInput}>
@@ -129,7 +168,7 @@ export default function Login() {
           </>
         ) : (
           <Text style={styles(colors).login_btn_text}>
-            {TEXT.Login.Sign_In}
+            {TEXT.Register.Sign_Up}
           </Text>
         )}
       </Pressable>
@@ -141,8 +180,8 @@ export default function Login() {
         <Link
           onPress={cleanup}
           style={{fontSize: 20, color: colors.Grey_Text}}
-          to={{screen: 'Register'}}>
-          {TEXT.Login.Create_Account}
+          to={{screen: 'Login'}}>
+          {TEXT.Login.Sign_In}
         </Link>
       </View>
     </View>
@@ -167,7 +206,7 @@ const styles = colors =>
       padding: 15,
       width: '90%',
       margin: 15,
-      borderRadius: 3,
+      borderRadius: 5,
       fontSize: 20,
       color: colors.Grey_Text,
       backgroundColor: colors.Input_Background,

@@ -1,146 +1,224 @@
-import React, { useEffect, useState, useRef } from 'react'
-import {
-    StyleSheet,
-    Text,
-    View,
-    Pressable
-} from 'react-native'
+import React, {useState, useRef, useContext} from 'react';
+import {StyleSheet, Text, View, Pressable, FlatList} from 'react-native';
 
-import { GestureHandlerRootView, FlatList } from 'react-native-gesture-handler'
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
-import DraggableFlatList, { ScaleDecorator } from "react-native-draggable-flatlist"
+import DraggableFlatList, {
+  ScaleDecorator,
+} from 'react-native-draggable-flatlist';
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { getDoneTasks } from '../utils/getDoneTasks'
-import { toggleCollapsed } from '../utils/toggleCollapsed'
-import { updateTaskData } from '../utils/updateTaskData'
-import { toggleDone } from '../utils/toggleDone'
+import {getDoneTasks} from '../utils/getDoneTasks';
 
-import RemoveGroupModal from '../components/RemoveGroupModal'
+import RemoveGroupModal from '../components/RemoveGroupModal';
 
-export default function Home({ data, setData }) {
+import AppContext from '../contexts/AppContext';
+import {isToday} from '../utils/dates/isToday';
+import {isTomorrow} from '../utils/dates/isTomorrow';
 
-    const [forceUpdate, setForceUpdate] = useState()
-    const parentRef = useRef(null)
-    const [stopScroll, setStopScroll] = useState(false)
-    const [removeModalVisible, setRemoveModalVisible] = useState(false)
-    const [chosenGroup, setChosenGroup] = useState()
+const MILISECONDS_IN_A_DAY = 86400000;
 
-    const renderTasks = (item, drag, group) => {
-        return (
-            <ScaleDecorator>
-                <Pressable onLongPress={drag}>
-                    <View style={styles.task}>
-                        <Text style={styles.task_text}>{item.value}</Text>
-                        <Icon onPress={() => toggleDone(group.group, data, setData, setForceUpdate, item)} name={'check'} size={25} color={item.state === 'DONE' ? 'lime' : 'grey'} />
-                    </View>
-                </Pressable>
-            </ScaleDecorator>
-        )
-    }
+export default function Home() {
+  const parentRef = useRef(null);
+  const [stopScroll, setStopScroll] = useState(false);
+  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+  const [chosenGroup, setChosenGroup] = useState();
 
-    const renderGroups = ({ item }) => {
-        const dragItem = item
-        const taskData = data
-        const doneTasks = getDoneTasks(item.group, data)
-        const allTasks = item.tasks.length
-        return (
-            <View style={styles.group}>
-                <Pressable style={{ marginRight: 15, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => toggleCollapsed(item, data, setData, setForceUpdate)} >
-                    <View style={styles.group_header}>
-                        <Icon style={{ marginRight: 15 }} name={item.collapsed === false ? 'angle-down' : 'angle-right'} size={40} color='black' />
-                        <Text style={styles.group_text}>{item.group.toUpperCase() + ` - ${doneTasks} / ${allTasks}`}</Text>
-                    </View>
-                    <Pressable onPress={() => {setChosenGroup(item.group); setRemoveModalVisible(true)}} style={styles.remove_btn}><Text style={styles.remove_btn_text}>Remove</Text></Pressable>
-                </Pressable>
-                <GestureHandlerRootView>
-                    <DraggableFlatList
-                        style={{ display: item.collapsed === true ? 'none' : 'flex' }}
-                        data={item.tasks}
-                        simultaneousHandlers={parentRef}
-                        renderItem={({ item, drag }) => renderTasks(item, drag, dragItem)}
-                        keyExtractor={(item) => item.created}
-                        onDragBegin={() => setStopScroll(true)}
-                        onRelease={() => setStopScroll(false)}
-                        onDragEnd={({ data }) => updateTaskData(data, taskData, setForceUpdate, item, setData)}
-                    />
-                </GestureHandlerRootView>
-            </View>
-        )
-    }
+  const {data, toggleDone, toggleCollapsed, updateTaskData, TEXT, colors} =
+    useContext(AppContext);
+
+  function renderTasks(item, drag, group) {
+    const dueIn =
+      Math.ceil((Date.parse(item.due) - Date.now()) / MILISECONDS_IN_A_DAY) ??
+      null;
 
     return (
-        <View>
-            <Text style={styles.header}>YOUR TASKS</Text>
-            <RemoveGroupModal
-                data={data}
-                setData={setData}
-                visible={removeModalVisible} 
-                group={chosenGroup} 
-                setVisible={setRemoveModalVisible} 
-                setGroupChosen={setChosenGroup}
-                setForceUpdate={setForceUpdate}
+      <ScaleDecorator>
+        <Pressable onLongPress={drag}>
+          <View
+            style={[
+              styles(colors).task,
+              {
+                backgroundColor:
+                  dueIn && dueIn <= 1 ? colors.Danger : colors.Primary,
+              },
+            ]}>
+            <View>
+              <Text style={styles(colors).task_text}>{item.value}</Text>
+              {dueIn > 0 ? (
+                <Text style={styles(colors).due_text}>
+                  {isToday(item.due) === true
+                    ? 'Due today!'
+                    : isTomorrow(item.due) === true
+                    ? 'Due tomorrow!'
+                    : `Due in ${dueIn} day(s)`}
+                </Text>
+              ) : null}
+            </View>
+            <Icon
+              onPress={() => toggleDone(group.id, item.id)}
+              name={'check'}
+              size={25}
+              color={item.state === 'DONE' ? colors.Check_Done : colors.Check}
             />
-            <FlatList
-                data={data.groups}
-                renderItem={renderGroups}
-                scrollEnabled={!stopScroll}
-                ref={(f) => f && (parentRef.current = f._listRef._scrollRef)}
-                showsVerticalScrollIndicator={false}
+          </View>
+        </Pressable>
+      </ScaleDecorator>
+    );
+  }
+
+  function renderGroups({item}) {
+    const dragItem = item;
+    const doneTasks = getDoneTasks(item.id, data);
+    const allTasks = item.tasks ? item.tasks.length : 0;
+    return (
+      <View style={styles(colors).group}>
+        <Pressable
+          style={{
+            marginRight: 15,
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+          onPress={() => toggleCollapsed(item.id)}>
+          <View style={styles(colors).group_header}>
+            <Icon
+              style={{marginRight: 15}}
+              name={item.collapsed === false ? 'angle-down' : 'angle-right'}
+              size={40}
+              color={colors.Grey_Text}
             />
+            <Text style={styles(colors).group_text}>
+              {item.group.toUpperCase() + ` - ${doneTasks} / ${allTasks}`}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => {
+              setChosenGroup(item);
+              setRemoveModalVisible(true);
+            }}
+            style={styles(colors).remove_btn}>
+            <Text style={styles(colors).remove_btn_text}>{TEXT.Remove}</Text>
+          </Pressable>
+        </Pressable>
+        <GestureHandlerRootView>
+          <DraggableFlatList
+            style={{display: item.collapsed === true ? 'none' : 'flex'}}
+            data={item.tasks ? item.tasks : []}
+            simultaneousHandlers={parentRef}
+            renderItem={({item, drag}) => renderTasks(item, drag, dragItem)}
+            keyExtractor={item => item.id}
+            onDragBegin={() => setStopScroll(true)}
+            onRelease={() => setStopScroll(false)}
+            onDragEnd={({data}) => updateTaskData(data, item.id)}
+          />
+        </GestureHandlerRootView>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles(colors).background}>
+      <Text style={styles(colors).header}>{TEXT.Home.Header}</Text>
+      <RemoveGroupModal
+        visible={removeModalVisible}
+        group={chosenGroup}
+        setVisible={setRemoveModalVisible}
+        setGroupChosen={setChosenGroup}
+      />
+      {data?.groups?.length > 0 ? (
+        <FlatList
+          data={data.groups}
+          renderItem={renderGroups}
+          scrollEnabled={!stopScroll}
+          ref={f => f && (parentRef.current = f._listRef._scrollRef)}
+          showsVerticalScrollIndicator={false}
+        />
+      ) : (
+        <View style={styles(colors).no_data}>
+          <Text style={styles(colors).no_data_text}>
+            {TEXT.Home.No_Data_Text_L}
+          </Text>
+          <Text style={[styles(colors).no_data_text, {fontSize: 20}]}>
+            {TEXT.Home.No_Data_Text_Sm}
+          </Text>
         </View>
-    )
+      )}
+    </View>
+  );
 }
 
-const styles = StyleSheet.create({
+const styles = colors =>
+  StyleSheet.create({
+    background: {
+      backgroundColor: colors.Background,
+      height: '100%',
+    },
     group: {
-        display: 'flex',
-        flexDirection: 'column',
-        paddingBottom: 60
+      display: 'flex',
+      flexDirection: 'column',
+      paddingBottom: 60,
     },
     group_text: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        letterSpacing: 3,
+      fontSize: 20,
+      fontWeight: 'bold',
+      letterSpacing: 3,
+      color: colors.Grey_Text,
     },
     task: {
-        padding: 15,
-        backgroundColor: 'blue',
-        borderRadius: 5,
-        borderColor: 'black',
-        elevation: 5,
-        marginBottom: 10,
-        marginTop: 10,
-        marginRight: 15,
-        marginLeft: 15,
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+      padding: 15,
+      backgroundColor: colors.Primary,
+      borderRadius: 5,
+      elevation: 5,
+      marginBottom: 10,
+      marginTop: 10,
+      marginRight: 15,
+      marginLeft: 15,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
     },
     task_text: {
-        color: 'white',
-        fontSize: 17
+      color: colors.Task_Text,
+      fontSize: 17,
     },
     group_header: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 15,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginLeft: 15,
     },
     header: {
-        textAlign: 'center',
-        fontSize: 30,
-        padding: 10,
-        letterSpacing: 5
+      textAlign: 'center',
+      fontSize: 30,
+      padding: 10,
+      letterSpacing: 5,
+      color: colors.Grey_Text,
     },
     remove_btn: {
-        padding: 10
+      padding: 10,
     },
     remove_btn_text: {
-        fontSize: 12,
-        fontWeight: 'bold',
-        color: 'red'
-    }
-})
+      fontSize: 13,
+      fontWeight: 'bold',
+      color: colors.Danger,
+    },
+    no_data: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '90%',
+    },
+    no_data_text: {
+      fontSize: 30,
+      color: colors.Grey_Text,
+      fontStyle: 'italic',
+    },
+    due_text: {
+      color: colors.Task_Text,
+      paddingTop: 5,
+    },
+  });

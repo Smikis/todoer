@@ -1,250 +1,428 @@
-import { useLinkProps } from '@react-navigation/native'
-import React, { useState } from 'react'
+import React, {useContext, useEffect, useState} from 'react';
 import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    Modal,
-    Pressable
-} from 'react-native'
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Modal,
+  Pressable,
+} from 'react-native';
 
-import { Dropdown } from 'react-native-element-dropdown'
+import {Dropdown} from 'react-native-element-dropdown';
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { getGroups } from '../utils/getGroups'
-import { appendGroup } from '../utils/appendGroup'
-import { appendTask } from '../utils/appendTask'
-import { groupExists } from '../utils/groupExists'
+import {getGroups} from '../utils/getGroups';
+import {groupExists} from '../utils/groupExists';
 
-export default function AddNewButton(props) {
-    const [inputText, setInputText] = useState('')
-    const [error, setError] = useState(null)
-    const [firstDropdownValue, setFirstDropdownValue] = useState(1)
-    const [isFirstDropdownFocused, setFirstDropdownFocused] = useState(false)
-    const [secondDropdownValue, setSecondDropdownValue] = useState()
-    const [isSecondDropdownFocused, setSecondDropdownFocused] = useState(false)
-    const [groupChosen, setGroupChosen] = useState()
+import AppContext from '../contexts/AppContext';
 
-    const groups = getGroups(props.data)
+import PropTypes from 'prop-types';
 
-    function handleExit() {
-        props.changeVisibility(false)
-        setInputText('')
-        setError(null)
-        setFirstDropdownValue(1)
-        setFirstDropdownFocused(false)
-        setSecondDropdownValue()
-        setSecondDropdownFocused(false)
-        setGroupChosen()
+import DatePicker from 'react-native-date-picker';
+
+import CheckBox from '@react-native-community/checkbox';
+
+export default function AddNewButton({changeVisibility, visible}) {
+  const [inputText, setInputText] = useState('');
+  const [groups, setGroups] = useState([]);
+  const [error, setError] = useState(null);
+  const [firstDropdownValue, setFirstDropdownValue] = useState(1);
+  const [secondDropdownValue, setSecondDropdownValue] = useState();
+  const [groupChosenId, setGroupChosenId] = useState();
+  const [date, setDate] = useState(new Date());
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [toggleCheckBox, setToggleCheckBox] = useState(false);
+  const [dateBtnText, setDateBtnText] = useState('Select...');
+  const [dateError, setDateError] = useState();
+
+  const {data, appendGroup, TEXT, appendTask, colors} = useContext(AppContext);
+
+  useEffect(() => {
+    setGroups(getGroups(data));
+  }, [data]);
+
+  function clearErrors() {
+    setError(null);
+    setDateError(null);
+  }
+
+  function handleExit() {
+    changeVisibility(false);
+    setInputText('');
+    setFirstDropdownValue(1);
+    setSecondDropdownValue();
+    setGroupChosenId();
+    setDateBtnText('Select...');
+    setToggleCheckBox(false);
+    setDatePickerOpen(false);
+    clearErrors();
+  }
+
+  function handleTaskConfirm() {
+    if (!groupChosenId) {
+      setError(TEXT.Add_New_Button.No_Group_Chosen);
+      return;
     }
-
-    function handleTaskConfirm() {
-        if (!groupChosen) { setError('No group selected!'); return }
-        if (inputText === '') { setError('Input cannot be empty!'); return }
-        appendTask(props.data, groupChosen, inputText)
-        handleExit()
+    if (inputText === '') {
+      setError(TEXT.Validation.Input_Empty);
+      return;
     }
-
-    function handleGroupConfirm() {
-        if (inputText === '') { setError('Input cannot be empty!'); return }
-        if (groupExists(props.data, inputText)) { setError('Group already exists!'); return }
-        appendGroup(props.data, inputText)
-        handleExit()
+    if (toggleCheckBox) {
+      if (date.getTime() - Date.now() <= 0) {
+        setDateError('Date must be set in the future!');
+        return;
+      } else {
+        appendTask(groupChosenId, inputText, date);
+        handleExit();
+      }
+    } else {
+      appendTask(groupChosenId, inputText);
+      handleExit();
     }
+  }
 
-    return (
-        <>
-            <Pressable
-                style={{
-                    bottom: 20,
+  function handleGroupConfirm() {
+    if (inputText === '') {
+      setError(TEXT.Validation.Input_Empty);
+      return;
+    }
+    if (groupExists(data, inputText)) {
+      setError(TEXT.Add_New_Button.Group_Exists);
+      return;
+    }
+    appendGroup(inputText);
+    handleExit();
+  }
+
+  return (
+    <>
+      <Pressable
+        style={styles(colors).middleButton}
+        onPress={() => changeVisibility(true)}>
+        <Icon name="plus" color={colors.Middle_Btn_Plus} size={30} />
+      </Pressable>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={visible || false}
+        onRequestClose={handleExit}>
+        <View style={styles(colors).centeredView}>
+          <View style={styles(colors).modalView}>
+            <Text style={styles(colors).label}>
+              {TEXT.Add_New_Button.Dropdown_1.Label}
+            </Text>
+            <Dropdown
+              style={styles(colors).dropdown}
+              placeholderStyle={{color: colors.Grey_Text, fontSize: 15}}
+              selectedTextStyle={{
+                color: colors.Grey_Text,
+                fontSize: 15,
+              }}
+              data={[
+                {label: TEXT.Add_New_Button.Task, value: 1},
+                {label: TEXT.Add_New_Button.Group, value: 2},
+              ]}
+              labelField="label"
+              valueField="value"
+              placeholder={TEXT.Placeholders.Select}
+              value={firstDropdownValue}
+              showsVerticalScrollIndicator={false}
+              containerStyle={{backgroundColor: colors.Dropdown_Item_Bg}}
+              renderItem={item => (
+                <View
+                  style={{
                     height: 50,
-                    width: 50,
+                    display: 'flex',
                     justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 100,
-                    backgroundColor: 'blue',
-                    elevation: 5
-                }}
-                onPress={() => props.changeVisibility(true)}
-            >
-                <Icon name="plus" color="white" size={30} />
-            </Pressable>
-            <Modal
-                animationType='fade'
-                transparent={true}
-                visible={props.visible || false}
-                onRequestClose={handleExit}
-            >
-                <View style={styles.centeredView}>
-                    <View style={styles.modalView}>
-                        <Text style={styles.label}>
-                            Choose to add
-                        </Text>
-                        <Dropdown
-                            style={styles.dropdown}
-                            placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
-                            data={[{ label: 'Task', value: 1 }, { label: 'Group', value: 2 }]}
-                            labelField="label"
-                            valueField="value"
-                            placeholder='Select'
-                            value={firstDropdownValue}
-                            onFocus={() => setFirstDropdownFocused(true)}
-                            onBlur={() => setFirstDropdownFocused(false)}
-                            onChange={item => {
-                                setFirstDropdownValue(item.value);
-                                setFirstDropdownFocused(false);
-                                setError(null)
-                                setInputText('')
-                            }}
-                        />
-                        {firstDropdownValue === 1 ?
-                            <>
-                                <Text style={[styles.label, { top: 73 }]}>
-                                    Choose group
-                                </Text>
-                                <Dropdown
-                                    style={styles.dropdown}
-                                    placeholderStyle={styles.placeholderStyle}
-                                    selectedTextStyle={styles.selectedTextStyle}
-                                    data={groups}
-                                    labelField="label"
-                                    valueField="value"
-                                    placeholder='Select'
-                                    value={secondDropdownValue}
-                                    onFocus={() => setSecondDropdownFocused(true)}
-                                    onBlur={() => setSecondDropdownFocused(false)}
-                                    onChange={item => {
-                                        setSecondDropdownValue(item.value);
-                                        setSecondDropdownFocused(false);
-                                        setGroupChosen(item.label)
-                                    }}
-                                />
-                                {error && <Text style={styles.error}>{error}</Text>}
-                                <TextInput
-                                    value={inputText}
-                                    style={[styles.task_input, { borderColor: error ? 'red' : 'black' }]}
-                                    onChangeText={text => setInputText(text)}
-                                    placeholder="Task"
-                                    onPressOut={() => setError(null)}
-                                />
-                                <View style={styles.button_container}>
-                                    <Pressable onPress={handleTaskConfirm} style={styles.button}>
-                                        <Text style={styles.button_text}>Confirm</Text>
-                                    </Pressable>
-                                    <Pressable onPress={handleExit} style={[styles.button, styles.btn_cancel]}>
-                                        <Text style={[styles.button_text, styles.btn_cancel_text]}>Cancel</Text>
-                                    </Pressable>
-                                </View>
-                            </> :
-                            <>
-                                {error && <Text style={styles.error}>{error}</Text>}
-                                <TextInput
-                                    value={inputText}
-                                    style={[styles.task_input, { borderColor: error ? 'red' : 'black' }]}
-                                    onChangeText={text => setInputText(text)}
-                                    placeholder="Group"
-                                    onPressOut={() => setError(null)}
-                                />
-                                <View style={styles.button_container}>
-                                    <Pressable onPress={handleGroupConfirm} style={styles.button}>
-                                        <Text style={styles.button_text}>Confirm</Text>
-                                    </Pressable>
-                                    <Pressable onPress={handleExit} style={[styles.button, styles.btn_cancel]}>
-                                        <Text style={[styles.button_text, styles.btn_cancel_text]}>Cancel</Text>
-                                    </Pressable>
-                                </View>
-                            </>
-                        }
-                    </View>
+                    backgroundColor: colors.Dropdown_Container_Bg,
+                  }}>
+                  <Text
+                    style={{
+                      color: colors.Grey_Text,
+                      paddingLeft: 15,
+                      fontSize: 15,
+                    }}>
+                    {item.label}
+                  </Text>
                 </View>
-            </Modal>
-        </>
-    )
+              )}
+              onChange={item => {
+                setFirstDropdownValue(item.value);
+                setError(null);
+                setInputText('');
+              }}
+            />
+            {firstDropdownValue === 1 ? (
+              <>
+                <Text style={[styles(colors).label, {top: 93}]}>
+                  {TEXT.Add_New_Button.Dropdown_2.Label}
+                </Text>
+                <Dropdown
+                  style={styles(colors).dropdown}
+                  placeholderStyle={{color: colors.Grey_Text, fontSize: 15}}
+                  selectedTextStyle={{color: colors.Grey_Text, fontSize: 15}}
+                  data={groups}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={TEXT.Placeholders.Select}
+                  value={secondDropdownValue}
+                  showsVerticalScrollIndicator={false}
+                  containerStyle={{
+                    backgroundColor: colors.Dropdown_Item_Bg,
+                  }}
+                  renderItem={item => (
+                    <View
+                      style={{
+                        height: 50,
+                        display: 'flex',
+                        justifyContent: 'center',
+                        backgroundColor: colors.Dropdown_Container_Bg,
+                      }}>
+                      <Text
+                        style={{
+                          color: colors.Grey_Text,
+                          paddingLeft: 15,
+                          fontSize: 15,
+                        }}>
+                        {item.label}
+                      </Text>
+                    </View>
+                  )}
+                  onChange={item => {
+                    setSecondDropdownValue(item.value);
+                    setGroupChosenId(item.value);
+                  }}
+                />
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    width: '100%',
+                  }}>
+                  <CheckBox
+                    disabled={false}
+                    value={toggleCheckBox}
+                    onValueChange={newValue => setToggleCheckBox(newValue)}
+                    tintColors={{
+                      true: colors.Primary,
+                      false: colors.Grey_Text,
+                    }}
+                  />
+                  <Text style={{color: colors.Text, marginLeft: 20}}>
+                    Has end date
+                  </Text>
+                </View>
+                {toggleCheckBox && (
+                  <>
+                    {dateError && (
+                      <Text style={styles(colors).error}>{dateError}</Text>
+                    )}
+                    <Pressable
+                      style={styles(colors).select_date}
+                      onPress={() => {
+                        setDatePickerOpen(true);
+                        clearErrors();
+                      }}>
+                      <Text style={{color: colors.Grey_Text}}>
+                        {dateBtnText}
+                      </Text>
+                    </Pressable>
+                  </>
+                )}
+                {error && <Text style={styles(colors).error}>{error}</Text>}
+                <TextInput
+                  value={inputText}
+                  style={[
+                    styles(colors).task_input,
+                    {borderColor: error ? colors.Danger : 'black'},
+                  ]}
+                  onChangeText={text => setInputText(text)}
+                  placeholder={TEXT.Add_New_Button.Task}
+                  onPressOut={() => setError(null)}
+                  placeholderTextColor={'grey'}
+                />
+                <DatePicker
+                  modal
+                  mode="date"
+                  open={datePickerOpen}
+                  date={date}
+                  onConfirm={date => {
+                    setDatePickerOpen(false);
+                    setDateBtnText(`${date.toDateString()}`);
+                    setDate(date);
+                  }}
+                  onCancel={() => {
+                    setDatePickerOpen(false);
+                  }}
+                />
+                <View style={styles(colors).button_container}>
+                  <Pressable
+                    onPress={handleTaskConfirm}
+                    style={styles(colors).button}>
+                    <Text style={styles(colors).button_text}>
+                      {TEXT.Confirm}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleExit}
+                    style={[styles(colors).button, styles(colors).btn_cancel]}>
+                    <Text
+                      style={[
+                        styles(colors).button_text,
+                        styles(colors).btn_cancel_text,
+                      ]}>
+                      {TEXT.Cancel}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              <>
+                {error && <Text style={styles(colors).error}>{error}</Text>}
+                <TextInput
+                  value={inputText}
+                  style={[
+                    styles(colors).task_input,
+                    {borderColor: error ? colors.Danger : 'black'},
+                  ]}
+                  onChangeText={text => setInputText(text)}
+                  placeholder={TEXT.Add_New_Button.Group}
+                  onPressOut={() => setError(null)}
+                  placeholderTextColor={'grey'}
+                />
+                <View style={styles(colors).button_container}>
+                  <Pressable
+                    onPress={handleGroupConfirm}
+                    style={styles(colors).button}>
+                    <Text style={styles(colors).button_text}>
+                      {TEXT.Confirm}
+                    </Text>
+                  </Pressable>
+                  <Pressable
+                    onPress={handleExit}
+                    style={[styles(colors).button, styles(colors).btn_cancel]}>
+                    <Text
+                      style={[
+                        styles(colors).button_text,
+                        styles(colors).btn_cancel_text,
+                      ]}>
+                      {TEXT.Cancel}
+                    </Text>
+                  </Pressable>
+                </View>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+    </>
+  );
 }
 
-const styles = StyleSheet.create({
+AddNewButton.propTypes = {
+  changeVisibility: PropTypes.func,
+  visible: PropTypes.bool,
+};
+
+const styles = colors =>
+  StyleSheet.create({
+    middleButton: {
+      bottom: 25,
+      height: 50,
+      width: 50,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 100,
+      backgroundColor: colors.Middle_Btn_Bg,
+      elevation: 5,
+    },
     centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
-        padding: 20
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      padding: 20,
     },
     modalView: {
-        borderRadius: 10,
-        alignItems: "center",
-        backgroundColor: 'white',
-        elevation: 5,
-        padding: 20,
-        width: '100%'
-    },
-    modalHeader: {
-        fontSize: 30,
-        color: 'black'
+      borderRadius: 10,
+      alignItems: 'center',
+      backgroundColor: colors.Background,
+      elevation: 5,
+      padding: 20,
+      paddingBottom: 40,
+      paddingTop: 40,
+      width: '100%',
     },
     task_input: {
-        fontSize: 20,
-        width: '100 %',
-        borderRadius: 3,
-        padding: 15,
-        margin: 20,
-        elevation: 5,
-        backgroundColor: 'white'
+      fontSize: 20,
+      width: '100 %',
+      borderRadius: 3,
+      padding: 15,
+      margin: 20,
+      elevation: 5,
+      backgroundColor: colors.Input_Background,
+      color: colors.Grey_Text,
     },
     button_container: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%'
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
     },
     button: {
-        padding: 15,
-        backgroundColor: 'blue',
-        borderRadius: 5,
-        width: 100,
-        elevation: 5
+      padding: 15,
+      backgroundColor: colors.Primary,
+      borderRadius: 5,
+      width: 100,
+      elevation: 5,
     },
     button_text: {
-        color: 'white',
-        fontSize: 15,
-        textAlign: 'center'
+      color: colors.Text_Btn_Blue,
+      fontSize: 15,
+      textAlign: 'center',
     },
     btn_cancel: {
-        backgroundColor: 'white',
+      backgroundColor: colors.Background,
     },
     btn_cancel_text: {
-        color: 'black'
+      color: colors.Text,
     },
     error: {
-        color: 'red',
-        fontSize: 20,
-        marginTop: 15
-    },
-    placeholderStyle: {
-        fontSize: 16,
-    },
-    selectedTextStyle: {
-        fontSize: 16,
+      color: colors.Danger,
+      fontSize: 20,
+      marginTop: 15,
     },
     dropdown: {
-        height: 50,
-        borderRadius: 3,
-        paddingHorizontal: 8,
-        width: '100%',
-        marginBottom: 15,
-        elevation: 5,
-        backgroundColor: 'white'
+      height: 50,
+      borderRadius: 3,
+      paddingHorizontal: 8,
+      width: '100%',
+      marginBottom: 15,
+      backgroundColor: colors.Input_Background,
+      elevation: 5,
+      fontSize: 50,
     },
     label: {
-        position: 'absolute',
-        backgroundColor: 'white',
-        left: 22,
-        top: 8,
-        zIndex: 999,
-        paddingHorizontal: 8,
-        fontSize: 14,
+      position: 'absolute',
+      backgroundColor: colors.Transparent,
+      left: 22,
+      top: 27,
+      zIndex: 999,
+      paddingHorizontal: 8,
+      fontSize: 14,
+      color: colors.Text,
     },
-})
+    select_date: {
+      padding: 15,
+      backgroundColor: colors.Background,
+      borderColor: colors.Primary,
+      borderWidth: 1,
+      width: '100%',
+      elevation: 5,
+      borderRadius: 3,
+      marginTop: 10,
+    },
+  });

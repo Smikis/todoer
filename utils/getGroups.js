@@ -1,9 +1,11 @@
 export function getGroups(data) {
-    let arr = []
-    let i = 1
+  let arr = [];
+  try {
     for (let group of data.groups) {
-        arr.push({ label: group.group, value: i })
-        i++;
+      arr.push({label: group.group, value: group.id});
     }
-    return arr
+  } catch (e) {
+    console.log(e);
+  }
+  return arr;
 }

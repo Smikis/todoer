@@ -1,129 +1,165 @@
-import React, { useState } from 'react'
+import React, {useContext, useState} from 'react';
 import {
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    Modal,
-    Pressable
-} from 'react-native'
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Modal,
+  Pressable,
+} from 'react-native';
+import PropTypes from 'prop-types';
 
-import { removeGroup } from '../utils/removeGroup'
+import AppContext from '../contexts/AppContext';
 
-export default function RemoveGroupModal({ data, setData, visible, setVisible, group, setGroupChosen, setRemoveModalVisible, setForceUpdate }) {
+export default function RemoveGroupModal({
+  visible,
+  setVisible,
+  group,
+  setGroupChosen,
+}) {
+  const [inputText, setInputText] = useState('');
+  const [error, setError] = useState(null);
+  const {TEXT, colors, removeGroup} = useContext(AppContext);
 
-    const [inputText, setInputText] = useState('')
-    const [error, setError] = useState(null)
+  function handleExit() {
+    setError(null);
+    setInputText('');
+    setVisible(false);
+    setGroupChosen(null);
+  }
 
-    function handleExit() {
-        setError(null),
-        setInputText('')
-        setVisible(false)
-        setGroupChosen(null)
+  function handleConfirm() {
+    if (inputText === '') {
+      setError(TEXT.Validation.Input_Empty);
+      return;
     }
-
-    function handleConfirm() {
-        if (inputText === '') {setError('Input cannot be empty!'); return}
-        if (inputText.toUpperCase() !== group.toUpperCase()) {setError(`Incorrect input!`); return}
-        removeGroup(data, setData, group)
-        handleExit()
+    if (inputText.toUpperCase() !== group.group.toUpperCase()) {
+      setError(TEXT.Validation.Incorrect_Input);
+      return;
     }
+    removeGroup(group.id);
+    handleExit();
+  }
 
-    return (
-        <Modal
-            animationType='fade'
-            transparent={true}
-            visible={visible || false}
-            onRequestClose={handleExit}
-        >
-            <View style={styles.centeredView}>
-                <View style={styles.modalView}>
-                    <Text style={styles.remove_text}>Are you sure you want to remove</Text>
-                    <Text style={styles.group_text}>{group ? group.toUpperCase() : null}</Text>
-                    { error && <Text style={styles.error}>{error}</Text> }
-                    <TextInput
-                        style={styles.input}
-                        value={inputText}
-                        onChangeText={text => setInputText(text)}
-                        placeholder={`Type ${group ? group.toUpperCase() : null} to confirm`}
-                        onPressOut={() => setError(null)}
-                    />
-                    <View style={styles.buttons}>
-                        <Pressable onPress={handleConfirm} style={styles.confirm_btn}><Text style={styles.confirm_text}>Confirm</Text></Pressable>
-                        <Pressable onPress={handleExit} style={styles.cancel_btn}><Text style={styles.cancel_text}>Cancel</Text></Pressable>
-                    </View>
-                </View>
-            </View>
-        </Modal>
-    )
+  return (
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={visible || false}
+      onRequestClose={handleExit}>
+      <View style={styles(colors).centeredView}>
+        <View style={styles(colors).modalView}>
+          <Text style={styles(colors).remove_text}>
+            {TEXT.Remove_Group_Modal.Remove_Text}
+          </Text>
+          <Text style={styles(colors).group_text}>
+            {group ? group.group.toUpperCase() : null}
+          </Text>
+          {error && <Text style={styles(colors).error}>{error}</Text>}
+          <TextInput
+            style={[
+              styles(colors).input,
+              {shadowColor: error ? colors.Danger : 'black'},
+            ]}
+            value={inputText}
+            onChangeText={text => setInputText(text)}
+            placeholder={`${
+              TEXT.Placeholders.Type
+            } ${group?.group.toUpperCase()} ${TEXT.Placeholders.To_Confirm}`}
+            onPressOut={() => setError(null)}
+            placeholderTextColor={'grey'}
+          />
+          <View style={styles(colors).buttons}>
+            <Pressable
+              onPress={handleConfirm}
+              style={styles(colors).confirm_btn}>
+              <Text style={styles(colors).confirm_text}>{TEXT.Remove}</Text>
+            </Pressable>
+            <Pressable onPress={handleExit} style={styles(colors).cancel_btn}>
+              <Text style={styles(colors).cancel_text}>{TEXT.Cancel}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
 }
 
-const styles = StyleSheet.create({
+RemoveGroupModal.propTypes = {
+  visible: PropTypes.bool,
+  setVisible: PropTypes.func,
+  group: PropTypes.object,
+  setGroupChosen: PropTypes.func,
+};
+
+const styles = colors =>
+  StyleSheet.create({
     centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.7)",
-        padding: 20
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)',
+      padding: 20,
     },
     modalView: {
-        borderRadius: 10,
-        alignItems: "center",
-        backgroundColor: 'white',
-        elevation: 5,
-        padding: 20,
-        width: '100%'
+      borderRadius: 10,
+      alignItems: 'center',
+      backgroundColor: colors.Background,
+      elevation: 5,
+      padding: 20,
+      width: '100%',
     },
     remove_text: {
-        fontSize: 20,
-        color: 'black',
-        padding: 10,
+      fontSize: 20,
+      color: colors.Text,
+      padding: 10,
     },
     group_text: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: 'blue'
+      fontSize: 30,
+      fontWeight: 'bold',
+      color: colors.Primary,
     },
     buttons: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '90%'
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      width: '90%',
     },
     confirm_btn: {
-        padding: 15,
-        borderRadius: 5,
-        borderColor: 'red',
-        borderWidth: 1,
-        backgroundColor: 'white',
-        elevation: 5
+      padding: 15,
+      borderRadius: 5,
+      borderColor: colors.Danger,
+      borderWidth: 2,
+      backgroundColor: colors.Background,
+      elevation: 5,
     },
     confirm_text: {
-        color: 'red',
-        fontSize: 15
+      color: colors.Danger,
+      fontSize: 15,
     },
     cancel_btn: {
-        padding: 15,
-        backgroundColor: 'white',
-        elevation: 5,
-        borderRadius: 5
+      padding: 15,
+      backgroundColor: colors.Background,
+      elevation: 5,
+      borderRadius: 5,
     },
     cancel_text: {
-        color: 'black',
-        fontSize: 15
+      color: colors.Text,
+      fontSize: 15,
     },
     input: {
-        margin: 15,
-        borderRadius: 5,
-        padding: 15,
-        width: '90%',
-        elevation: 5,
-        backgroundColor: 'white'
+      margin: 15,
+      borderRadius: 5,
+      padding: 15,
+      width: '90%',
+      elevation: 5,
+      backgroundColor: colors.Input_Background,
+      color: colors.Grey_Text,
     },
     error: {
-        color: 'red',
-        fontSize: 20,
-        marginTop: 15
-    }
-})
+      color: colors.Danger,
+      fontSize: 20,
+      marginTop: 15,
+    },
+  });

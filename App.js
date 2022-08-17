@@ -1,119 +1,131 @@
-import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import React, {useContext, useState} from 'react';
+import {View} from 'react-native';
 
-import 'react-native-gesture-handler'
+import 'react-native-gesture-handler';
 
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { NavigationContainer } from '@react-navigation/native'
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-import Home from './Screens/Home'
-import Login from './Screens/Login'
-import Profile from './Screens/Profile'
-import LoadingScreen from './Screens/LoadingScreen'
+import Home from './Screens/Home';
+import Login from './Screens/Login';
+import Profile from './Screens/Profile';
+import LoadingScreen from './Screens/LoadingScreen';
+import Register from './Screens/Register';
+import AddNewButton from './components/AddNewButton';
 
-import AddNewButton from './components/AddNewButton'
+import AppContext from './contexts/AppContext';
 
-import { useAuth } from './authentication/authContext'
-import { useDb } from './database/dbContext'
-
-import { updateLocalData } from './utils/updateLocalData'
-import { readLocalData } from './utils/readLocalData'
-
-const Tab = createBottomTabNavigator()
+const Tab = createBottomTabNavigator();
 
 export default function App() {
-  const { user } = useAuth()
-  const { readData, updateDataInterval } = useDb()
-  const [data, setData] = useState({})
-  const [modalVisible, setModalVisible] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [firstRender, setFirstRender] = useState(true)
+  const [modalVisible, setModalVisible] = useState(false);
 
-  // Gathers data required for rendering
-  useEffect(() => {
-    if (!user) return
-    (async () => {
-      try {
-        const initData = await readData(user)
-        setData(initData)
-        setLoading(false)
-        updateLocalData(initData)
-      }
-      catch (e) {
-        const initData = await readLocalData()
-        setData(initData)
-        setLoading(false)
-      }
-    })()
-  }, [user])
+  const {loading, user, TEXT, colors} = useContext(AppContext);
 
-  // Initiates background task to update database every 5 minutes
-  useEffect(() => {
-    if (firstRender && user) {updateDataInterval(user); setFirstRender(false)}
-  }, [loading])
+  const MiddleButton = () => {
+    return null;
+  };
 
-  if (!user) return (<Login />)
-
-  const MiddleButton = () => { return null }
-
-  return (
-    loading ? <LoadingScreen visible={loading}/> :
+  return loading ? (
+    <LoadingScreen visible={loading} />
+  ) : (
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
           tabBarStyle: {
             height: 60,
+            display: user ? 'flex' : 'none',
+            backgroundColor: colors.Background,
+            elevation: 5,
+            borderColor: colors.Grey_Text,
           },
-        }}
-      >
-        <Tab.Screen
-          name='Home'
-          children={() => <Home data={data} setData={setData}/>}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View
-                style={{
-                  height: 50,
-                  width: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Icon name="home" color={focused ? 'blue' : 'black'} size={30} />
-              </View>
-            )
-          }}
-        />
-        <Tab.Screen
-          name="Add"
-          options={{
-            tabBarLabel: '',
-            tabBarButton: () => (<AddNewButton visible={modalVisible} changeVisibility={setModalVisible} data={data} setData={setData}/>)
-          }}
-          component={MiddleButton}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={Profile}
-          options={{
-            tabBarIcon: ({ focused }) => (
-              <View
-                style={{
-                  height: 50,
-                  width: 50,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Icon name="user" color={focused ? 'blue' : 'black'} size={30} />
-              </View>
-            )
-          }}
-        />
+        }}>
+        {user ? (
+          <>
+            <Tab.Screen
+              name="Home"
+              component={Home}
+              options={{
+                tabBarLabel: TEXT.Screens.Home,
+                tabBarIcon: ({focused}) => (
+                  <View
+                    style={{
+                      height: 50,
+                      width: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon
+                      name="home"
+                      color={
+                        focused ? colors.Nav_Icon_Focused : colors.Nav_Icon
+                      }
+                      size={30}
+                    />
+                  </View>
+                ),
+              }}
+            />
+            <Tab.Screen
+              name="Add"
+              options={{
+                tabBarLabel: '',
+                tabBarButton: () => (
+                  <AddNewButton
+                    visible={modalVisible}
+                    changeVisibility={setModalVisible}
+                  />
+                ),
+              }}
+              component={MiddleButton}
+            />
+            <Tab.Screen
+              name="Profile"
+              component={Profile}
+              options={{
+                tabBarLabel: TEXT.Screens.Profile,
+                tabBarIcon: ({focused}) => (
+                  <View
+                    style={{
+                      height: 50,
+                      width: 50,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon
+                      name="user"
+                      color={
+                        focused ? colors.Nav_Icon_Focused : colors.Nav_Icon
+                      }
+                      size={30}
+                    />
+                  </View>
+                ),
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <Tab.Screen
+              name="Login"
+              component={Login}
+              options={{
+                tabBarButton: () => {},
+              }}
+            />
+            <Tab.Screen
+              name="Register"
+              component={Register}
+              options={{
+                tabBarButton: () => {},
+              }}
+            />
+          </>
+        )}
       </Tab.Navigator>
     </NavigationContainer>
-  )
+  );
 }
