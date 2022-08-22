@@ -1,4 +1,4 @@
-import React, {createContext, useState, useEffect, useMemo} from 'react';
+import React, {createContext, useState, useEffect} from 'react';
 
 import {useAuth} from '../hooks/useAuth';
 import {useDb} from '../hooks/useDb';
@@ -17,10 +17,12 @@ import {
 } from '../services/TriggerNotifications';
 import {onCreateTriggerNotification} from '../services/TriggerNotifications';
 
+import {useAsyncStorage} from '@react-native-async-storage/async-storage';
+
 const AppContext = createContext();
 
 export function AppProvider({children}) {
-  const [theme, setTheme] = useState('Dark');
+  const [theme, setTheme] = useState('Light');
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(false);
   const {readData, updateDb} = useDb();
@@ -29,6 +31,7 @@ export function AppProvider({children}) {
   const TEXT = getTextBasedOnLocale(locale);
   const colors = getColorsByTheme(theme);
   const [channelId, setChannelId] = useState('');
+  const {getItem, setItem} = useAsyncStorage('@user_theme');
 
   useEffect(() => {
     if (user) {
@@ -36,8 +39,10 @@ export function AppProvider({children}) {
         try {
           setLoading(true);
           const initData = await readData();
-          setData(initData);
           const notifChannel = await createNotifChannelId();
+          const user_theme = await getItem();
+          setTheme(user_theme);
+          setData(initData);
           setChannelId(notifChannel);
           setLoading(false);
         } catch (e) {
@@ -50,6 +55,16 @@ export function AppProvider({children}) {
   useEffect(() => {
     (async () => await updateDb(data))();
   }, [data]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await setItem(theme);
+      } catch (e) {
+        console.log(e);
+      }
+    })();
+  }, [theme]);
 
   function appendGroup(inputText) {
     let temp = undefined;
@@ -158,7 +173,13 @@ export function AppProvider({children}) {
         ];
     }
     if (dueDate) {
-      await onCreateTriggerNotification(dueDate, channelId, taskId, inputText);
+      await onCreateTriggerNotification(
+        dueDate,
+        channelId,
+        taskId,
+        inputText,
+        TEXT,
+      );
     }
 
     setData(temp);

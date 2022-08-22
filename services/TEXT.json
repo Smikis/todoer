@@ -7,7 +7,12 @@
         "Home" : {
             "Header" : "TAVO VEIKLOS",
             "No_Data_Text_L": "Nėra veiklų...",
-            "No_Data_Text_Sm": "Pamėgink pridėti grupę!"
+            "No_Data_Text_Sm": "Pamėgink pridėti grupę!",
+            "Due_Today": "Baigiasi šiandien!",
+            "Due_Tomorrow": "Baigsis rytoj!",
+            "Due_In": "Baigsis po",
+            "Days": " dienos(ų)!",
+            "Has_End_Date": "Turi pabaigos datą"
         },
         "Loading" : "Kraunama...",
         "Validation" : {
@@ -20,7 +25,8 @@
             "Email_In_Use" : "Toks el. paštas jau naudojamas!",
             "Weak_Password" : "Slaptažodis yra per silpnas!",
             "Input_Empty" : "Laukelis negali būti tuščias!",
-            "Incorrect_Input" : "Neteisinga įvestis!"
+            "Incorrect_Input" : "Neteisinga įvestis!",
+            "Date_Must_Be_In_Future": "Data turi būti nustatyta į ateitį!"
         },
         "Login" : {
             "Header" : "Prisijungimas",
@@ -58,7 +64,13 @@
         },
         "Remove": "Panaikinti",
         "Confirm" : "Patvirtinti",
-        "Cancel" : "Atšaukti"
+        "Cancel" : "Atšaukti",
+        "Notifications": {
+            "Due_Soon": "laikas netrukus baigsis",
+            "Notifications": "Pranešimai",
+            "Notif_Alert_Body": "Jeigu norite gauti pranešimus, duokite leidimą per nustatymus.",
+            "Go_To_Settings": "Eiti į nustatymus"
+        }
     },
     "TEXT_EN": {
         "Screens" : {
@@ -68,7 +80,12 @@
         "Home" : {
             "Header" : "YOUR TASKS",
             "No_Data_Text_L": "No tasks to display...",
-            "No_Data_Text_Sm": "You might want to add a group!"
+            "No_Data_Text_Sm": "You might want to add a group!",
+            "Due_Today": "Due today!",
+            "Due_Tomorrow": "Due tomorrow!",
+            "Due_In": "Due in",
+            "Days": "day(s)!",
+            "Has_End_Date": "Has end date"
         },
         "Loading" : "Loading...",
         "Validation" : {
@@ -81,7 +98,8 @@
             "Email_In_Use" : "Email is already in use!",
             "Weak_Password" : "Password is too weak!",
             "Input_Empty" : "Input cannot be empty!",
-            "Incorrect_Input" : "Incorrect input!"
+            "Incorrect_Input" : "Incorrect input!",
+            "Date_Must_Be_In_Future": "Date must be set in the future!"
         },
         "Login" : {
             "Header" : "Sign In",
@@ -119,6 +137,12 @@
         },
         "Remove": "Remove",
         "Confirm" : "Confirm",
-        "Cancel" : "Cancel"
+        "Cancel" : "Cancel",
+        "Notifications": {
+            "Due_Soon": "is due soon!",
+            "Notifications": "Notifications",
+            "Notif_Alert_Body": "If you want to receive notifications, please enable them in the settings.",
+            "Go_To_Settings": "Go to settings"
+        }
     }
 }

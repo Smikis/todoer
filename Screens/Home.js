@@ -41,18 +41,18 @@ export default function Home() {
               styles(colors).task,
               {
                 backgroundColor:
-                  dueIn && dueIn <= 1 ? colors.Danger : colors.Primary,
+                  dueIn && dueIn > 0 ? colors.Danger : colors.Primary,
               },
             ]}>
             <View>
               <Text style={styles(colors).task_text}>{item.value}</Text>
-              {dueIn > 0 ? (
+              {dueIn >= 0 ? (
                 <Text style={styles(colors).due_text}>
                   {isToday(item.due) === true
-                    ? 'Due today!'
+                    ? TEXT.Home.Due_Today
                     : isTomorrow(item.due) === true
-                    ? 'Due tomorrow!'
-                    : `Due in ${dueIn} day(s)`}
+                    ? TEXT.Home.Due_Tomorrow
+                    : `${TEXT.Home.Due_In} ${dueIn} ${TEXT.Home.Days} `}
                 </Text>
               ) : null}
             </View>

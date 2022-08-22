@@ -33,10 +33,9 @@ export default function AddNewButton({changeVisibility, visible}) {
   const [date, setDate] = useState(new Date());
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
-  const [dateBtnText, setDateBtnText] = useState('Select...');
   const [dateError, setDateError] = useState();
-
   const {data, appendGroup, TEXT, appendTask, colors} = useContext(AppContext);
+  const [dateBtnText, setDateBtnText] = useState(TEXT.Placeholders.Select);
 
   useEffect(() => {
     setGroups(getGroups(data));
@@ -53,7 +52,7 @@ export default function AddNewButton({changeVisibility, visible}) {
     setFirstDropdownValue(1);
     setSecondDropdownValue();
     setGroupChosenId();
-    setDateBtnText('Select...');
+    setDateBtnText(TEXT.Placeholders.Select);
     setToggleCheckBox(false);
     setDatePickerOpen(false);
     clearErrors();
@@ -70,7 +69,7 @@ export default function AddNewButton({changeVisibility, visible}) {
     }
     if (toggleCheckBox) {
       if (date.getTime() - Date.now() <= 0) {
-        setDateError('Date must be set in the future!');
+        setDateError(TEXT.Validation.Date_Must_Be_In_Future);
         return;
       } else {
         appendTask(groupChosenId, inputText, date);
@@ -212,7 +211,7 @@ export default function AddNewButton({changeVisibility, visible}) {
                     }}
                   />
                   <Text style={{color: colors.Text, marginLeft: 20}}>
-                    Has end date
+                    {TEXT.Home.Has_End_Date}
                   </Text>
                 </View>
                 {toggleCheckBox && (

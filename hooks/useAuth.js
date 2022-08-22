@@ -16,7 +16,7 @@ const DATABASE_URL =
 export function useAuth(setData) {
   const [user, setUser] = useState();
 
-  async function createDefaults() {
+  async function createDefaults(user) {
     // Used only once when creating a new user
     try {
       const reference = firebase

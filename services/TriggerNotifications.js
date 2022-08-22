@@ -22,6 +22,7 @@ export async function onCreateTriggerNotification(
   channelId,
   taskId,
   task,
+  TEXT,
 ) {
   const settings = await notifee.getNotificationSettings();
 
@@ -36,7 +37,7 @@ export async function onCreateTriggerNotification(
         {
           id: taskId,
           title: 'AppName',
-          body: `"${task}" is due soon!`,
+          body: `"${task}" ${TEXT.Notifications.Due_Soon}`,
           android: {
             channelId: channelId,
             pressAction: {
@@ -52,16 +53,16 @@ export async function onCreateTriggerNotification(
     }
   } else
     Alert.alert(
-      'Notifications',
-      'If you want to receive notifications, please enable them in the settings',
+      TEXT.Notifications.Notifications,
+      TEXT.Notifications.Notif_Alert_Body,
       [
         {
-          text: 'Cancel',
+          text: TEXT.Cancel,
           onPress: () => {},
           style: 'cancel',
         },
         {
-          text: 'Go to settings',
+          text: TEXT.Notifications.Go_To_Settings,
           onPress: async () => await notifee.openAlarmPermissionSettings(),
         },
       ],

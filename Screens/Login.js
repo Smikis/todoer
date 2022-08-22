@@ -91,7 +91,7 @@ export default function Login() {
         value={inputs.email}
         style={[
           styles(colors).input,
-          {shadowColor: inputs.emailError ? 'red' : 'black'},
+          {shadowColor: inputs.emailError ? colors.Danger : 'black'},
         ]}
         onChangeText={text => setInputs(prev => ({...prev, email: text}))}
         placeholder={TEXT.Placeholders.Email}
@@ -107,7 +107,7 @@ export default function Login() {
         value={inputs.password}
         style={[
           styles(colors).input,
-          {shadowColor: inputs.passwordError ? 'red' : 'black'},
+          {shadowColor: inputs.passwordError ? colors.Danger : 'black'},
         ]}
         onChangeText={text => setInputs(prev => ({...prev, password: text}))}
         placeholder={TEXT.Placeholders.Password}
