@@ -3,6 +3,7 @@ import notifee, {
   AndroidNotificationSetting,
   TriggerType,
 } from '@notifee/react-native';
+
 import {getNotifTimestamp} from '../utils/dates/getNotifTimestamp';
 
 import {Alert} from 'react-native';
@@ -50,14 +51,21 @@ export async function onCreateTriggerNotification(
       console.log(e);
     }
   } else
-    Alert.alert('Notifications', 'If you want to receive notifications, please ', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      {text: 'OK', onPress: () => console.log('OK Pressed')},
-    ]);
+    Alert.alert(
+      'Notifications',
+      'If you want to receive notifications, please enable them in the settings',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'Go to settings',
+          onPress: async () => await notifee.openAlarmPermissionSettings(),
+        },
+      ],
+    );
 }
 
 export async function cancelNotifications(taskId) {
