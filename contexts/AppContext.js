@@ -6,18 +6,19 @@ import useLanguage from '../hooks/useLanguage';
 
 import {getColorsByTheme} from '../services/getColorByTheme';
 import {getTextBasedOnLocale} from '../services/getTextBasedOnLanguage';
+import {onCreateTriggerNotification} from '../services/TriggerNotifications';
+import {
+  cancelNotifications,
+  createNotifChannelId,
+} from '../services/TriggerNotifications';
 
 import PropTypes from 'prop-types';
 
 import {createUID} from '../utils/createUID';
 
-import {
-  cancelNotifications,
-  createNotifChannelId,
-} from '../services/TriggerNotifications';
-import {onCreateTriggerNotification} from '../services/TriggerNotifications';
-
 import {useAsyncStorage} from '@react-native-async-storage/async-storage';
+
+import Toast from 'react-native-toast-message';
 
 const AppContext = createContext();
 
@@ -41,7 +42,7 @@ export function AppProvider({children}) {
           const initData = await readData();
           const notifChannel = await createNotifChannelId();
           const user_theme = await getItem();
-          setTheme(user_theme);
+          if (user_theme !== null && user_theme !== theme) setTheme(user_theme);
           setData(initData);
           setChannelId(notifChannel);
           setLoading(false);
@@ -56,46 +57,33 @@ export function AppProvider({children}) {
     (async () => await updateDb(data))();
   }, [data]);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await setItem(theme);
-      } catch (e) {
-        console.log(e);
-      }
-    })();
-  }, [theme]);
-
   function appendGroup(inputText) {
     let temp = undefined;
+
+    const group = {
+      id: createUID(),
+      group: inputText,
+      created: Date.now(),
+      tasks: [],
+      collapsed: false,
+    };
+
     try {
       temp = JSON.parse(JSON.stringify(data));
-      temp.groups = [
-        ...temp.groups,
-        {
-          id: createUID(),
-          group: inputText,
-          created: Date.now(),
-          tasks: [],
-          collapsed: false,
-        },
-      ];
+      temp.groups = [...temp.groups, group];
     } catch (e) {
       console.log('appendGroup:', e);
-      if (temp === null)
-        temp = {
-          groups: [
-            {
-              id: createUID(),
-              group: inputText,
-              created: Date.now(),
-              tasks: [],
-              collapsed: false,
-            },
-          ],
-        };
+      try {
+        if (temp === null)
+          temp = {
+            groups: [group],
+          };
+      } catch {
+        return 'error';
+      }
     }
     setData(temp);
+    return 'success';
   }
 
   function toggleDone(groupId, taskId) {
@@ -131,12 +119,21 @@ export function AppProvider({children}) {
     const index = temp.groups.findIndex(group => {
       return group.id === groupId;
     });
+    try {
+      temp.groups[index].tasks = newData;
+    } catch {
+      Toast.show({
+        type: 'errorToast',
+        text1: TEXT.Toast.Error,
+        text2: TEXT.Toast.Error_Text,
+        props: {colors: colors},
+      });
+    }
 
-    temp.groups[index].tasks = newData;
     setData(temp);
   }
 
-  async function appendTask(groupId, inputText, dueDate = null) {
+  async function appendTask(groupId, inputText, dueDate) {
     let temp = JSON.parse(JSON.stringify(data));
 
     const index = temp.groups.findIndex(group => {
@@ -145,33 +142,29 @@ export function AppProvider({children}) {
 
     const taskId = createUID();
 
+    const task = {
+      id: taskId,
+      created: Date.now(),
+      state: 'NOT DONE',
+      value: inputText,
+      due: dueDate ? Date.parse(dueDate) : null,
+    };
+
     try {
-      temp.groups[index].tasks = [
-        ...temp.groups[index].tasks,
-        {
-          id: taskId,
-          created: Date.now(),
-          state: 'NOT DONE',
-          value: inputText,
-          due: dueDate,
-        },
-      ];
+      temp.groups[index].tasks = [...temp.groups[index].tasks, task];
     } catch (e) {
       console.log('appendTask:', e);
-      if (
-        temp.groups[index].tasks === undefined ||
-        temp.groups[index].tasks?.length === 0
-      )
-        temp.groups[index].tasks = [
-          {
-            id: taskId,
-            created: Date.now(),
-            state: 'NOT DONE',
-            value: inputText,
-            due: dueDate,
-          },
-        ];
+      try {
+        if (
+          temp.groups[index].tasks === undefined ||
+          temp.groups[index].tasks?.length === 0
+        )
+          temp.groups[index].tasks = [task];
+      } catch {
+        return 'error';
+      }
     }
+
     if (dueDate) {
       await onCreateTriggerNotification(
         dueDate,
@@ -183,43 +176,51 @@ export function AppProvider({children}) {
     }
 
     setData(temp);
+    return 'success';
   }
 
   function removeGroup(groupId) {
     let temp = JSON.parse(JSON.stringify(data));
+
     const index = temp.groups.findIndex(group => {
       return group.id === groupId;
     });
 
-    temp.groups[index]?.tasks.forEach(task => {
-      cancelNotifications(task.id);
-    });
-
-    temp.groups.splice(index, 1);
+    try {
+      temp.groups[index]?.tasks?.forEach(task => {
+        cancelNotifications(task.id);
+      });
+      temp.groups.splice(index, 1);
+    } catch {
+      return 'error';
+    }
     setData(temp);
+    return 'success';
   }
 
-  function switchTheme() {
-    setTheme(prev => (prev === 'Light' ? 'Dark' : 'Light'));
+  async function switchTheme() {
+    const newTheme = theme === 'Light' ? 'Dark' : 'Light';
+    setTheme(newTheme);
+    await setItem(newTheme);
   }
 
   return (
     <AppContext.Provider
       value={{
-        user: user,
-        data: data,
-        appendGroup: appendGroup,
-        toggleDone: toggleDone,
-        toggleCollapsed: toggleCollapsed,
-        updateTaskData: updateTaskData,
-        appendTask: appendTask,
-        removeGroup: removeGroup,
-        switchTheme: switchTheme,
-        loading: loading,
-        locale: locale,
-        TEXT: TEXT,
-        colors: colors,
-        theme: theme,
+        user,
+        data,
+        appendGroup,
+        toggleDone,
+        toggleCollapsed,
+        updateTaskData,
+        appendTask,
+        removeGroup,
+        switchTheme,
+        loading,
+        locale,
+        TEXT,
+        colors,
+        theme,
       }}>
       {children}
     </AppContext.Provider>

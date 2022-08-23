@@ -9,6 +9,8 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+import Toast from 'react-native-toast-message';
+
 import AppContext from '../contexts/AppContext';
 
 export default function RemoveGroupModal({
@@ -37,7 +39,28 @@ export default function RemoveGroupModal({
       setError(TEXT.Validation.Incorrect_Input);
       return;
     }
-    removeGroup(group.id);
+
+    const res = removeGroup(group.id);
+
+    switch (res) {
+      case 'success':
+        Toast.show({
+          type: 'successToast',
+          text1: TEXT.Toast.Success,
+          text2: `${TEXT.Toast.Remove_Success_Text} ${group.group}!`,
+          props: {colors: colors},
+        });
+        break;
+      case 'error':
+        Toast.show({
+          type: 'errorToast',
+          text1: TEXT.Toast.Error,
+          text2: TEXT.Toast.Error_Text,
+          props: {colors: colors},
+        });
+        break;
+    }
+
     handleExit();
   }
 

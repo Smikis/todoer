@@ -30,8 +30,7 @@ export default function Home() {
 
   function renderTasks(item, drag, group) {
     const dueIn =
-      Math.ceil((Date.parse(item.due) - Date.now()) / MILISECONDS_IN_A_DAY) ??
-      null;
+      Math.ceil((item.due - Date.now()) / MILISECONDS_IN_A_DAY) ?? null;
 
     return (
       <ScaleDecorator>
@@ -41,7 +40,7 @@ export default function Home() {
               styles(colors).task,
               {
                 backgroundColor:
-                  dueIn && dueIn > 0 ? colors.Danger : colors.Primary,
+                  dueIn && dueIn >= 0 ? colors.Danger : colors.Primary,
               },
             ]}>
             <View>

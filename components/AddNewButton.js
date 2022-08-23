@@ -23,6 +23,8 @@ import DatePicker from 'react-native-date-picker';
 
 import CheckBox from '@react-native-community/checkbox';
 
+import Toast from 'react-native-toast-message';
+
 export default function AddNewButton({changeVisibility, visible}) {
   const [inputText, setInputText] = useState('');
   const [groups, setGroups] = useState([]);
@@ -67,18 +69,40 @@ export default function AddNewButton({changeVisibility, visible}) {
       setError(TEXT.Validation.Input_Empty);
       return;
     }
+
+    let res;
+
     if (toggleCheckBox) {
       if (date.getTime() - Date.now() <= 0) {
         setDateError(TEXT.Validation.Date_Must_Be_In_Future);
         return;
       } else {
-        appendTask(groupChosenId, inputText, date);
-        handleExit();
+        res = appendTask(groupChosenId, inputText, date);
       }
     } else {
-      appendTask(groupChosenId, inputText);
-      handleExit();
+      res = appendTask(groupChosenId, inputText);
     }
+
+    switch (res) {
+      case 'success':
+        Toast.show({
+          type: 'successToast',
+          text1: TEXT.Toast.Success,
+          text2: TEXT.Task_Success_Text,
+          props: {colors: colors},
+        });
+        break;
+      case 'error':
+        Toast.show({
+          type: 'errorToast',
+          text1: TEXT.Toast.Error,
+          text2: TEXT.Toast.Error_Text,
+          props: {colors: colors},
+        });
+        break;
+    }
+
+    handleExit();
   }
 
   function handleGroupConfirm() {
@@ -90,7 +114,27 @@ export default function AddNewButton({changeVisibility, visible}) {
       setError(TEXT.Add_New_Button.Group_Exists);
       return;
     }
-    appendGroup(inputText);
+    const res = appendGroup(inputText);
+
+    switch (res) {
+      case 'success':
+        Toast.show({
+          type: 'successToast',
+          text1: TEXT.Toast.Success,
+          text2: TEXT.Group_Success_Text,
+          props: {colors: colors},
+        });
+        break;
+      case 'error':
+        Toast.show({
+          type: 'errorToast',
+          text1: TEXT.Toast.Error,
+          text2: TEXT.Toast.Error_Text,
+          props: {colors: colors},
+        });
+        break;
+    }
+
     handleExit();
   }
 

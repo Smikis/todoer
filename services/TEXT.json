@@ -70,6 +70,14 @@
             "Notifications": "Pranešimai",
             "Notif_Alert_Body": "Jeigu norite gauti pranešimus, duokite leidimą per nustatymus.",
             "Go_To_Settings": "Eiti į nustatymus"
+        },
+        "Toast": {
+            "Success": "Valio!",
+            "Remove_Success_Text": "Sėkmingai panaikinta grupė",
+            "Error": "Klaida!",
+            "Task_Success_Text": "Sėkmingai pridėta nauja veikla!",
+            "Group_Success_Text": "Sėkmingai pridėta nauja grupė!",
+            "Error_Text": "Kažkas nepavyko! Bandykite dar kartą."
         }
     },
     "TEXT_EN": {
@@ -143,6 +151,14 @@
             "Notifications": "Notifications",
             "Notif_Alert_Body": "If you want to receive notifications, please enable them in the settings.",
             "Go_To_Settings": "Go to settings"
+        },
+        "Toast": {
+            "Success": "Success!",
+            "Remove_Success_Text": "Successfully removed group!",
+            "Task_Success_Text": "Successfully added new task!",
+            "Error": "Error!",
+            "Group_Success_Text": "Successfully added new group!",
+            "Error_Text": "Something went wrong! Please try again."
         }
     }
 }
