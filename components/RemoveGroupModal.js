@@ -1,46 +1,46 @@
-import React, {useContext, useState} from 'react';
+import React, { useContext, useState } from 'react'
 import {
   StyleSheet,
   Text,
   View,
   TextInput,
   Modal,
-  Pressable,
-} from 'react-native';
-import PropTypes from 'prop-types';
+  Pressable
+} from 'react-native'
+import PropTypes from 'prop-types'
 
-import Toast from 'react-native-toast-message';
+import Toast from 'react-native-toast-message'
 
-import AppContext from '../contexts/AppContext';
+import AppContext from '../contexts/AppContext'
 
 export default function RemoveGroupModal({
   visible,
   setVisible,
   group,
-  setGroupChosen,
+  setGroupChosen
 }) {
-  const [inputText, setInputText] = useState('');
-  const [error, setError] = useState(null);
-  const {TEXT, colors, removeGroup} = useContext(AppContext);
+  const [inputText, setInputText] = useState('')
+  const [error, setError] = useState(null)
+  const { TEXT, colors, removeGroup } = useContext(AppContext)
 
   function handleExit() {
-    setError(null);
-    setInputText('');
-    setVisible(false);
-    setGroupChosen(null);
+    setError(null)
+    setInputText('')
+    setVisible(false)
+    setGroupChosen(null)
   }
 
   function handleConfirm() {
     if (inputText === '') {
-      setError(TEXT.Validation.Input_Empty);
-      return;
+      setError(TEXT.Validation.Input_Empty)
+      return
     }
     if (inputText.toUpperCase() !== group.group.toUpperCase()) {
-      setError(TEXT.Validation.Incorrect_Input);
-      return;
+      setError(TEXT.Validation.Incorrect_Input)
+      return
     }
 
-    const res = removeGroup(group.id);
+    const res = removeGroup(group.id)
 
     switch (res) {
       case 'success':
@@ -48,20 +48,20 @@ export default function RemoveGroupModal({
           type: 'successToast',
           text1: TEXT.Toast.Success,
           text2: `${TEXT.Toast.Remove_Success_Text} ${group.group}!`,
-          props: {colors: colors},
-        });
-        break;
+          props: { colors: colors }
+        })
+        break
       case 'error':
         Toast.show({
           type: 'errorToast',
           text1: TEXT.Toast.Error,
           text2: TEXT.Toast.Error_Text,
-          props: {colors: colors},
-        });
-        break;
+          props: { colors: colors }
+        })
+        break
     }
 
-    handleExit();
+    handleExit()
   }
 
   return (
@@ -82,7 +82,7 @@ export default function RemoveGroupModal({
           <TextInput
             style={[
               styles(colors).input,
-              {shadowColor: error ? colors.Danger : 'black'},
+              { shadowColor: error ? colors.Danger : 'black' }
             ]}
             value={inputText}
             onChangeText={text => setInputText(text)}
@@ -105,15 +105,15 @@ export default function RemoveGroupModal({
         </View>
       </View>
     </Modal>
-  );
+  )
 }
 
 RemoveGroupModal.propTypes = {
   visible: PropTypes.bool,
   setVisible: PropTypes.func,
   group: PropTypes.object,
-  setGroupChosen: PropTypes.func,
-};
+  setGroupChosen: PropTypes.func
+}
 
 const styles = colors =>
   StyleSheet.create({
@@ -122,7 +122,7 @@ const styles = colors =>
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'rgba(255, 255, 255, 0.5)',
-      padding: 20,
+      padding: 20
     },
     modalView: {
       borderRadius: 10,
@@ -130,24 +130,24 @@ const styles = colors =>
       backgroundColor: colors.Background,
       elevation: 5,
       padding: 20,
-      width: '100%',
+      width: '100%'
     },
     remove_text: {
       fontSize: 20,
       color: colors.Text,
-      padding: 10,
+      padding: 10
     },
     group_text: {
       fontSize: 30,
       fontWeight: 'bold',
-      color: colors.Primary,
+      color: colors.Primary
     },
     buttons: {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '90%',
+      width: '90%'
     },
     confirm_btn: {
       padding: 15,
@@ -155,21 +155,21 @@ const styles = colors =>
       borderColor: colors.Danger,
       borderWidth: 2,
       backgroundColor: colors.Background,
-      elevation: 5,
+      elevation: 5
     },
     confirm_text: {
       color: colors.Danger,
-      fontSize: 15,
+      fontSize: 15
     },
     cancel_btn: {
       padding: 15,
       backgroundColor: colors.Background,
       elevation: 5,
-      borderRadius: 5,
+      borderRadius: 5
     },
     cancel_text: {
       color: colors.Text,
-      fontSize: 15,
+      fontSize: 15
     },
     input: {
       margin: 15,
@@ -178,11 +178,11 @@ const styles = colors =>
       width: '90%',
       elevation: 5,
       backgroundColor: colors.Input_Background,
-      color: colors.Grey_Text,
+      color: colors.Grey_Text
     },
     error: {
       color: colors.Danger,
       fontSize: 20,
-      marginTop: 15,
-    },
-  });
+      marginTop: 15
+    }
+  })

@@ -1,21 +1,25 @@
-import React, {useContext} from 'react';
-import {ActivityIndicator, StyleSheet, Text, View} from 'react-native';
-import AppContext from '../contexts/AppContext';
-import PropTypes from 'prop-types';
+import React, { useContext } from 'react'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import AppContext from '../contexts/AppContext'
+import PropTypes from 'prop-types'
 
-export default function LoadingScreen({visible}) {
-  const {TEXT, colors} = useContext(AppContext);
+export default function LoadingScreen({ visible }) {
+  const { TEXT, colors } = useContext(AppContext)
   return (
     <View style={styles(colors).spinner}>
-      <ActivityIndicator size="large" color="blue" animating={visible} />
+      <ActivityIndicator
+        size="large"
+        color={colors.Primary}
+        animating={visible}
+      />
       <Text style={styles(colors).loading_text}>{TEXT.Loading}</Text>
     </View>
-  );
+  )
 }
 
 LoadingScreen.propTypes = {
-  visible: PropTypes.bool,
-};
+  visible: PropTypes.bool
+}
 
 const styles = colors =>
   StyleSheet.create({
@@ -23,10 +27,10 @@ const styles = colors =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.Background,
+      backgroundColor: colors.Background
     },
     loading_text: {
       fontSize: 30,
-      color: colors.Loading_Text,
-    },
-  });
+      color: colors.Loading_Text
+    }
+  })

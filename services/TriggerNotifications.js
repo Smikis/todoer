@@ -1,20 +1,20 @@
 import notifee, {
   AndroidImportance,
   AndroidNotificationSetting,
-  TriggerType,
-} from '@notifee/react-native';
+  TriggerType
+} from '@notifee/react-native'
 
-import {getNotifTimestamp} from '../utils/dates/getNotifTimestamp';
+import { getNotifTimestamp } from '../utils/dates/getNotifTimestamp'
 
-import {Alert} from 'react-native';
+import { Alert } from 'react-native'
 
 export async function createNotifChannelId() {
   const channelId = await notifee.createChannel({
     id: 'notification-channel',
     name: 'Reminders',
-    importance: AndroidImportance.DEFAULT,
-  });
-  return channelId;
+    importance: AndroidImportance.DEFAULT
+  })
+  return channelId
 }
 
 export async function onCreateTriggerNotification(
@@ -22,15 +22,15 @@ export async function onCreateTriggerNotification(
   channelId,
   taskId,
   task,
-  TEXT,
+  TEXT
 ) {
-  const settings = await notifee.getNotificationSettings();
+  const settings = await notifee.getNotificationSettings()
 
   if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
     const trigger = {
       type: TriggerType.TIMESTAMP,
-      timestamp: getNotifTimestamp(dueDate),
-    };
+      timestamp: getNotifTimestamp(dueDate)
+    }
 
     try {
       await notifee.createTriggerNotification(
@@ -42,14 +42,14 @@ export async function onCreateTriggerNotification(
             channelId: channelId,
             pressAction: {
               id: 'task-is-due',
-              launchActivity: 'default',
-            },
-          },
+              launchActivity: 'default'
+            }
+          }
         },
-        trigger,
-      );
+        trigger
+      )
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   } else
     Alert.alert(
@@ -59,16 +59,16 @@ export async function onCreateTriggerNotification(
         {
           text: TEXT.Cancel,
           onPress: () => {},
-          style: 'cancel',
+          style: 'cancel'
         },
         {
           text: TEXT.Notifications.Go_To_Settings,
-          onPress: async () => await notifee.openAlarmPermissionSettings(),
-        },
-      ],
-    );
+          onPress: async () => await notifee.openAlarmPermissionSettings()
+        }
+      ]
+    )
 }
 
 export async function cancelNotifications(taskId) {
-  await notifee.cancelNotification(taskId);
+  await notifee.cancelNotification(taskId)
 }

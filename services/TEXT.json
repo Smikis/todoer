@@ -26,7 +26,9 @@
             "Weak_Password" : "Slaptažodis yra per silpnas!",
             "Input_Empty" : "Laukelis negali būti tuščias!",
             "Incorrect_Input" : "Neteisinga įvestis!",
-            "Date_Must_Be_In_Future": "Data turi būti nustatyta į ateitį!"
+            "Date_Must_Be_In_Future": "Data turi būti nustatyta į ateitį!",
+            "Credential_Expired": "Baigėsi kredencialų galiojimo laikas!",
+            "User_Disabled": "Vartotojas yra išjungtas!"
         },
         "Login" : {
             "Header" : "Prisijungimas",
@@ -107,7 +109,9 @@
             "Weak_Password" : "Password is too weak!",
             "Input_Empty" : "Input cannot be empty!",
             "Incorrect_Input" : "Incorrect input!",
-            "Date_Must_Be_In_Future": "Date must be set in the future!"
+            "Date_Must_Be_In_Future": "Date must be set in the future!",
+            "Credential_Expired": "Credentials expired!",
+            "User_Disabled": "User is disabled!",
         },
         "Login" : {
             "Header" : "Sign In",

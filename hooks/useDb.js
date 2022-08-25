@@ -1,29 +1,29 @@
-import {firebase} from '@react-native-firebase/database';
+import { firebase } from '@react-native-firebase/database'
 
-import {useAuth} from './useAuth';
+import { useAuth } from './useAuth'
 
 const DATABASE_URL =
-  'https://to-domobileapp-default-rtdb.europe-west1.firebasedatabase.app/';
+  'https://to-domobileapp-default-rtdb.europe-west1.firebasedatabase.app/'
 
 export function useDb() {
-  const {user} = useAuth();
+  const { user } = useAuth()
 
   async function readData() {
-    let returnData = {};
+    let returnData = {}
     try {
       const reference = firebase
         .app()
         .database(DATABASE_URL)
-        .ref(`/users/${user.uid}`);
+        .ref(`/users/${user.uid}`)
 
-      const res = await reference.once('value');
+      const res = await reference.once('value')
 
-      returnData = res.val();
+      returnData = res.val()
     } catch (e) {
-      console.log('readData:', e);
+      console.log('readData:', e)
     }
 
-    return returnData;
+    return returnData
   }
 
   async function updateDb(newData) {
@@ -31,18 +31,18 @@ export function useDb() {
       const reference = firebase
         .app()
         .database(DATABASE_URL)
-        .ref(`/users/${user.uid}`);
+        .ref(`/users/${user.uid}`)
 
-      await reference.update(newData);
+      await reference.update(newData)
     } catch (e) {
-      console.log('updateDb:', e);
+      console.log('updateDb:', e)
     }
   }
 
   const value = {
     readData,
-    updateDb,
-  };
+    updateDb
+  }
 
-  return value;
+  return value
 }
