@@ -63,7 +63,6 @@ export function AppProvider({ children }) {
     const group = {
       id: createUID(),
       group: inputText,
-      created: Date.now(),
       tasks: [],
       collapsed: false
     }
@@ -96,10 +95,9 @@ export function AppProvider({ children }) {
       return task.id === taskId
     })
 
-    let currentState = temp.groups[groupIndex].tasks[taskIndex].state
+    let currentState = temp.groups[groupIndex].tasks[taskIndex].isDone
 
-    temp.groups[groupIndex].tasks[taskIndex].state =
-      currentState === 'DONE' ? 'NOT DONE' : 'DONE'
+    temp.groups[groupIndex].tasks[taskIndex].isDone = !currentState
 
     setData(temp)
   }
@@ -144,8 +142,7 @@ export function AppProvider({ children }) {
 
     const task = {
       id: taskId,
-      created: Date.now(),
-      state: 'NOT DONE',
+      isDone: false,
       value: inputText,
       due: dueDate ? Date.parse(dueDate) : null
     }

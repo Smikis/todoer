@@ -1,55 +1,14 @@
 import { useState, useEffect } from 'react'
 
 import auth from '@react-native-firebase/auth'
-import { firebase } from '@react-native-firebase/database'
 
 import {
   GoogleSignin,
   statusCodes
 } from '@react-native-google-signin/google-signin'
 
-import { createUID } from '../utils/createUID'
-
-const DATABASE_URL =
-  'https://to-domobileapp-default-rtdb.europe-west1.firebasedatabase.app/'
-
-export function useAuth(setData) {
+export function useAuth() {
   const [user, setUser] = useState()
-
-  async function createDefaults(user) {
-    // Used only once when creating a new user
-    try {
-      const reference = firebase
-        .app()
-        .database(DATABASE_URL)
-        .ref(`/users/${user.uid}`)
-
-      const data = {
-        groups: [
-          {
-            group: 'default',
-            id: createUID(),
-            tasks: [
-              {
-                value: 'Your first task!',
-                state: 'NOT DONE',
-                created: Date.now(),
-                id: createUID()
-              }
-            ],
-            created: Date.now(),
-            collapsed: false
-          }
-        ]
-      }
-
-      await reference.set(data)
-
-      setData(data)
-    } catch (e) {
-      console.log('createDefaults:', e)
-    }
-  }
 
   async function createUserWithEmailAndPass(email, password) {
     const resp = await auth()
@@ -57,8 +16,6 @@ export function useAuth(setData) {
       .catch(e => {
         return e.code
       })
-    if (resp?.additionalUserInfo?.isNewUser === true)
-      await createDefaults(resp.user)
     return resp
   }
 
@@ -118,8 +75,7 @@ export function useAuth(setData) {
     loginWithGoogle,
     loginUserWithEmailAndPass,
     createUserWithEmailAndPass,
-    logout,
-    createDefaults
+    logout
   }
 
   return value

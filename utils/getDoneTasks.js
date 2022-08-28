@@ -5,7 +5,7 @@ export function getDoneTasks(groupId, data) {
       return group.id === groupId
     })
     data.groups[index].tasks.forEach(task => {
-      if (task.state === 'DONE') done++
+      if (task.isDone) done++
     })
   } catch (e) {
     console.log(e)

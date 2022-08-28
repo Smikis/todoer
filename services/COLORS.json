@@ -17,8 +17,9 @@
         "Text_Btn_Blue": "#F5F5F5",
         "Dropdown_Container_Bg" : "#D7D7D7",
         "Dropdown_Item_Bg" : "#E5E5E5",
-        "Loading_Text" : "#000000",
-        "Transparent": ""
+        "Loading_Text" : "#FFFFFF",
+        "Transparent": "",
+        "Loading_Spinner": "#FFFFFF"
     },
     "Dark" : {
         "Primary": "#555555",
@@ -39,6 +40,7 @@
         "Dropdown_Container_Bg": "#444444",
         "Dropdown_Item_Bg" : "#666666",
         "Loading_Text" : "#F5F5F5",
-        "Transparent": ""
+        "Transparent": "",
+        "Loading_Spinner": "#F5F5F5"
     }
 }

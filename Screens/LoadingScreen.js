@@ -1,18 +1,25 @@
 import React, { useContext } from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native'
 import AppContext from '../contexts/AppContext'
 import PropTypes from 'prop-types'
+import LoadingDots from 'react-native-loading-dots'
 
 export default function LoadingScreen({ visible }) {
   const { TEXT, colors } = useContext(AppContext)
   return (
     <View style={styles(colors).spinner}>
-      <ActivityIndicator
-        size="large"
-        color={colors.Primary}
-        animating={visible}
+      <Image
+        source={require('../icons/play_store_512.png')}
+        style={{ width: 200, height: 200 }}
       />
-      <Text style={styles(colors).loading_text}>{TEXT.Loading}</Text>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
+        <ActivityIndicator
+          size="large"
+          color={colors.Loading_Spinner}
+          animating={visible}
+        />
+        <Text style={styles(colors).loading_text}>{TEXT.Loading}</Text>
+      </View>
     </View>
   )
 }
@@ -27,7 +34,7 @@ const styles = colors =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.Background
+      backgroundColor: colors.Primary
     },
     loading_text: {
       fontSize: 30,

@@ -1,35 +1,35 @@
-import React, {useContext, useState} from 'react';
-import {View, Text} from 'react-native';
+import React, { useContext, useState } from 'react'
+import { View, Text } from 'react-native'
 
-import 'react-native-gesture-handler';
+import 'react-native-gesture-handler'
 
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {NavigationContainer} from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { NavigationContainer } from '@react-navigation/native'
 
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome'
 
-import Home from './Screens/Home';
-import Login from './Screens/Login';
-import Profile from './Screens/Profile';
-import LoadingScreen from './Screens/LoadingScreen';
-import Register from './Screens/Register';
-import AddNewButton from './components/AddNewButton';
+import Home from './Screens/Home'
+import Login from './Screens/Login'
+import Profile from './Screens/Profile'
+import LoadingScreen from './Screens/LoadingScreen'
+import Register from './Screens/Register'
+import AddNewButton from './components/AddNewButton'
 
-import Toast from 'react-native-toast-message';
+import Toast from 'react-native-toast-message'
 
-import AppContext from './contexts/AppContext';
-import {toastConfig} from './configs/ToastConfig';
+import AppContext from './contexts/AppContext'
+import { toastConfig } from './configs/ToastConfig'
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
 
 export default function App() {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false)
 
-  const {loading, user, TEXT, colors} = useContext(AppContext);
+  const { loading, user, TEXT, colors } = useContext(AppContext)
 
   const MiddleButton = () => {
-    return null;
-  };
+    return null
+  }
 
   return loading ? (
     <LoadingScreen visible={loading} />
@@ -44,8 +44,8 @@ export default function App() {
               display: user ? 'flex' : 'none',
               backgroundColor: colors.Background,
               elevation: 5,
-              borderColor: colors.Grey_Text,
-            },
+              borderColor: colors.Grey_Text
+            }
           }}>
           {user ? (
             <>
@@ -54,13 +54,13 @@ export default function App() {
                 component={Home}
                 options={{
                   tabBarLabel: TEXT.Screens.Home,
-                  tabBarIcon: ({focused}) => (
+                  tabBarIcon: ({ focused }) => (
                     <View
                       style={{
                         height: 50,
                         width: 50,
                         justifyContent: 'center',
-                        alignItems: 'center',
+                        alignItems: 'center'
                       }}>
                       <Icon
                         name="home"
@@ -70,7 +70,7 @@ export default function App() {
                         size={30}
                       />
                     </View>
-                  ),
+                  )
                 }}
               />
               <Tab.Screen
@@ -82,7 +82,7 @@ export default function App() {
                       visible={modalVisible}
                       changeVisibility={setModalVisible}
                     />
-                  ),
+                  )
                 }}
                 component={MiddleButton}
               />
@@ -91,13 +91,13 @@ export default function App() {
                 component={Profile}
                 options={{
                   tabBarLabel: TEXT.Screens.Profile,
-                  tabBarIcon: ({focused}) => (
+                  tabBarIcon: ({ focused }) => (
                     <View
                       style={{
                         height: 50,
                         width: 50,
                         justifyContent: 'center',
-                        alignItems: 'center',
+                        alignItems: 'center'
                       }}>
                       <Icon
                         name="user"
@@ -107,7 +107,7 @@ export default function App() {
                         size={30}
                       />
                     </View>
-                  ),
+                  )
                 }}
               />
             </>
@@ -117,14 +117,14 @@ export default function App() {
                 name="Login"
                 component={Login}
                 options={{
-                  tabBarButton: () => {},
+                  tabBarButton: () => {}
                 }}
               />
               <Tab.Screen
                 name="Register"
                 component={Register}
                 options={{
-                  tabBarButton: () => {},
+                  tabBarButton: () => {}
                 }}
               />
             </>
@@ -133,5 +133,5 @@ export default function App() {
       </NavigationContainer>
       <Toast config={toastConfig} />
     </>
-  );
+  )
 }

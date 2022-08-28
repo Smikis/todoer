@@ -4,9 +4,5 @@ export function isTomorrow(date) {
 
   const dueDate = new Date(date).getDate()
 
-  if (tomorrow.getDate() === dueDate) {
-    return true
-  }
-
-  return false
+  return tomorrow.getDate() === dueDate
 }
