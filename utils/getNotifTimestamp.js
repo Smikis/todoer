@@ -1,4 +1,4 @@
-import { isTomorrow } from './isTomorrow'
+import { isTomorrow } from './dates/isTomorrow'
 
 export function getNotifTimestamp(dueDate) {
   let date = new Date()

@@ -71,7 +71,7 @@ export default function Profile() {
           value={theme === 'Light' ? false : true}
         />
         <Text style={{ color: colors.Text, marginLeft: 15, fontSize: 15 }}>
-          Dark Mode
+          {TEXT.DarkMode}
         </Text>
       </View>
     </View>

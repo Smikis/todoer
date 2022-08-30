@@ -2,8 +2,7 @@ import { firebase } from '@react-native-firebase/database'
 
 import { useAuth } from './useAuth'
 
-const DATABASE_URL =
-  'https://to-domobileapp-default-rtdb.europe-west1.firebasedatabase.app/'
+import { DATABASE_URL } from '../constants/CONSTANTS'
 
 export function useDb() {
   const { user } = useAuth()

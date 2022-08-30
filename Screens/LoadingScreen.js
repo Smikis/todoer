@@ -2,7 +2,6 @@ import React, { useContext } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native'
 import AppContext from '../contexts/AppContext'
 import PropTypes from 'prop-types'
-import LoadingDots from 'react-native-loading-dots'
 
 export default function LoadingScreen({ visible }) {
   const { TEXT, colors } = useContext(AppContext)
@@ -34,7 +33,7 @@ const styles = colors =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.Primary
+      backgroundColor: colors.Loading_Spinner_Bg
     },
     loading_text: {
       fontSize: 30,

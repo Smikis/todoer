@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from 'react'
 
 import { useAuth } from '../hooks/useAuth'
 import { useDb } from '../hooks/useDb'
-import useLanguage from '../hooks/useLanguage'
+import { useLanguage } from '../hooks/useLanguage'
 
 import { getColorsByTheme } from '../services/getColorByTheme'
 import { getTextBasedOnLocale } from '../services/getTextBasedOnLanguage'

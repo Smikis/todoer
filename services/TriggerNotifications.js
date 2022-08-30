@@ -4,7 +4,7 @@ import notifee, {
   TriggerType
 } from '@notifee/react-native'
 
-import { getNotifTimestamp } from '../utils/dates/getNotifTimestamp'
+import { getNotifTimestamp } from '../utils/getNotifTimestamp'
 
 import { Alert } from 'react-native'
 

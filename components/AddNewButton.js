@@ -294,7 +294,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
                   date={date}
                   onConfirm={date => {
                     setDatePickerOpen(false)
-                    setDateBtnText(`${date.toDateString()}`)
+                    setDateBtnText(`${date.toLocaleDateString()}`)
                     setDate(date)
                   }}
                   onCancel={() => {

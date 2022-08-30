@@ -7,6 +7,8 @@ import {
   statusCodes
 } from '@react-native-google-signin/google-signin'
 
+import { WEBCLIENTID } from '../constants/CONSTANTS'
+
 export function useAuth() {
   const [user, setUser] = useState()
 
@@ -29,8 +31,7 @@ export function useAuth() {
 
   async function loginWithGoogle() {
     GoogleSignin.configure({
-      webClientId:
-        '13955733373-mbg4hm5sbuen066djl4gbbmmre1mc4ft.apps.googleusercontent.com'
+      webClientId: WEBCLIENTID
     })
     try {
       await GoogleSignin.hasPlayServices()

@@ -1,8 +1,6 @@
 import { NativeModules } from 'react-native'
 
-export default function useLanguage() {
+export function useLanguage() {
   const locale = NativeModules.I18nManager.localeIdentifier
-  return {
-    locale
-  }
+  return { locale }
 }
