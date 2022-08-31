@@ -5,7 +5,9 @@ import {
   View,
   TextInput,
   Pressable,
-  ActivityIndicator
+  ActivityIndicator,
+  SafeAreaView,
+  StatusBar
 } from 'react-native'
 
 import { Link } from '@react-navigation/native'
@@ -18,7 +20,7 @@ import AppContext from '../contexts/AppContext'
 export default function Login() {
   const { loginUserWithEmailAndPass, loginWithGoogle } = useAuth()
 
-  const { TEXT, colors } = useContext(AppContext)
+  const { TEXT, colors, theme } = useContext(AppContext)
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -124,7 +126,11 @@ export default function Login() {
   }
 
   return (
-    <View style={styles(colors).container}>
+    <SafeAreaView style={styles(colors).container}>
+      <StatusBar
+        backgroundColor={colors.Background}
+        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+      />
       <Text style={styles(colors).header}>{TEXT.Login.Header}</Text>
       {inputs.emailError && (
         <Text style={styles(colors).error}>{inputs.emailError}</Text>
@@ -189,7 +195,7 @@ export default function Login() {
           {TEXT.Login.Create_Account}
         </Link>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 

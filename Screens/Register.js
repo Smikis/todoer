@@ -6,7 +6,9 @@ import {
   View,
   TextInput,
   Pressable,
-  ActivityIndicator
+  ActivityIndicator,
+  SafeAreaView,
+  StatusBar
 } from 'react-native'
 
 import { Link } from '@react-navigation/native'
@@ -17,7 +19,7 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin'
 import AppContext from '../contexts/AppContext'
 
 export default function Register() {
-  const { TEXT, colors } = useContext(AppContext)
+  const { TEXT, colors, theme } = useContext(AppContext)
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -103,7 +105,11 @@ export default function Register() {
   }
 
   return (
-    <View style={styles(colors).container}>
+    <SafeAreaView style={styles(colors).container}>
+      <StatusBar
+        backgroundColor={colors.Background}
+        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+      />
       <Text style={styles(colors).header}>{TEXT.Register.Header}</Text>
       {inputs.emailError && (
         <Text style={styles(colors).error}>{inputs.emailError}</Text>
@@ -184,7 +190,7 @@ export default function Register() {
           {TEXT.Login.Sign_In}
         </Link>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 

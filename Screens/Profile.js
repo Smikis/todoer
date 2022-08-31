@@ -1,5 +1,13 @@
 import React, { useContext } from 'react'
-import { StyleSheet, Text, View, Image, Pressable } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  SafeAreaView,
+  StatusBar
+} from 'react-native'
 
 import { Switch } from 'react-native'
 
@@ -15,7 +23,11 @@ export default function Profile() {
   const { user, logout } = useAuth()
 
   return (
-    <View style={styles(colors).profile_container}>
+    <SafeAreaView style={styles(colors).profile_container}>
+      <StatusBar
+        backgroundColor={colors.Background}
+        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+      />
       <View style={styles(colors).pfp}>
         {user ? (
           user.photoURL ? (
@@ -74,7 +86,7 @@ export default function Profile() {
           {TEXT.DarkMode}
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   )
 }
 

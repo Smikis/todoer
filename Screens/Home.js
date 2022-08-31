@@ -1,5 +1,12 @@
-import React, { useState, useRef, useContext } from 'react'
-import { StyleSheet, Text, View, FlatList } from 'react-native'
+import React, { useState, useContext } from 'react'
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+  StatusBar
+} from 'react-native'
 
 import { getDoneTasks } from '../utils/getDoneTasks'
 
@@ -15,8 +22,15 @@ export default function Home() {
   const [removeModalVisible, setRemoveModalVisible] = useState(false)
   const [chosenGroup, setChosenGroup] = useState()
 
-  const { data, toggleDone, toggleCollapsed, updateTaskData, TEXT, colors } =
-    useContext(AppContext)
+  const {
+    data,
+    toggleDone,
+    toggleCollapsed,
+    updateTaskData,
+    TEXT,
+    colors,
+    theme
+  } = useContext(AppContext)
 
   function renderTasks(item, drag, group) {
     return (
@@ -54,7 +68,11 @@ export default function Home() {
   }
 
   return (
-    <View style={styles(colors).background}>
+    <SafeAreaView style={styles(colors).background}>
+      <StatusBar
+        backgroundColor={colors.background}
+        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+      />
       <Text style={styles(colors).header}>{TEXT.Home.Header}</Text>
       {data?.groups?.length > 0 ? (
         <FlatList
@@ -79,7 +97,7 @@ export default function Home() {
         setVisible={setRemoveModalVisible}
         setGroupChosen={setChosenGroup}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 
