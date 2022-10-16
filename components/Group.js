@@ -97,13 +97,15 @@ const styles = colors =>
       fontSize: 20,
       fontWeight: 'bold',
       letterSpacing: 3,
-      color: colors.Grey_Text
+      color: colors.Grey_Text,
+      flexShrink: 1
     },
     group_header: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      marginLeft: 15
+      marginLeft: 15,
+      flexShrink: 1
     },
     remove_btn: {
       padding: 10

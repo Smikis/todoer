@@ -18,7 +18,8 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin'
 import AppContext from '../contexts/AppContext'
 
 export default function Login() {
-  const { loginUserWithEmailAndPass, loginWithGoogle } = useAuth()
+  const { loginUserWithEmailAndPass, loginWithGoogle, continueAsGuest } =
+    useAuth()
 
   const { TEXT, colors, theme } = useContext(AppContext)
 
@@ -125,6 +126,13 @@ export default function Login() {
     cleanup()
   }
 
+  async function handleContinueAsGuest() {
+    setLoading(true)
+    await continueAsGuest()
+    setLoading(false)
+    cleanup()
+  }
+
   return (
     <SafeAreaView style={styles(colors).container}>
       <StatusBar
@@ -195,6 +203,13 @@ export default function Login() {
           {TEXT.Login.Create_Account}
         </Link>
       </View>
+      <Pressable
+        style={styles(colors).continue_as_guest}
+        onPress={handleContinueAsGuest}>
+        <Text style={styles(colors).continue_as_guest_text}>
+          {TEXT.Continue_Without_Account}
+        </Text>
+      </Pressable>
     </SafeAreaView>
   )
 }
@@ -261,5 +276,12 @@ const styles = colors =>
       color: colors.Danger,
       fontSize: 20,
       marginTop: 15
+    },
+    continue_as_guest: {
+      padding: 15
+    },
+    continue_as_guest_text: {
+      color: colors.Grey_Text,
+      fontSize: 17
     }
   })

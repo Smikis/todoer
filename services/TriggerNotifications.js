@@ -8,6 +8,8 @@ import { getNotifTimestamp } from '../utils/getNotifTimestamp'
 
 import { Alert } from 'react-native'
 
+import { displayName as appName } from '../app.json'
+
 export async function createNotifChannelId() {
   const channelId = await notifee.createChannel({
     id: 'notification-channel',
@@ -36,7 +38,7 @@ export async function onCreateTriggerNotification(
       await notifee.createTriggerNotification(
         {
           id: taskId,
-          title: 'AppName',
+          title: appName,
           body: `"${task}" ${TEXT.Notifications.Due_Soon}`,
           android: {
             channelId: channelId,

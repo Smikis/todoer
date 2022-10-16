@@ -34,10 +34,11 @@ export default function Task({ colors, item, TEXT, drag, group, toggleDone }) {
             styles(colors).task,
             {
               backgroundColor:
-                dueIn >= 0 && !item.isDone ? colors.Danger : colors.Primary
+                dueIn >= 0 && !item.isDone ? colors.Danger : colors.Primary,
+              borderLeftColor: item.isDone ? colors.Check_Done : colors.Check
             }
           ]}>
-          <View>
+          <View style={{ flexShrink: 1 }}>
             <Text style={styles(colors).task_text}>{item.value}</Text>
             {dueIn >= 0 && !item.isDone ? (
               <Text style={styles(colors).due_text}>
@@ -75,7 +76,8 @@ const styles = colors =>
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      alignItems: 'center'
+      alignItems: 'center',
+      borderLeftWidth: 7
     },
     task_text: {
       color: colors.Task_Text,

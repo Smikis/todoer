@@ -35,7 +35,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
   const [date, setDate] = useState(new Date())
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [toggleCheckBox, setToggleCheckBox] = useState(false)
-  const [dateError, setDateError] = useState()
+  const [dateError, setDateError] = useState(null)
   const { data, appendGroup, TEXT, appendTask, colors } = useContext(AppContext)
   const [dateBtnText, setDateBtnText] = useState(TEXT.Placeholders.Select)
 

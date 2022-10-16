@@ -81,7 +81,9 @@ export const TEXT_LT = {
     Group_Success_Text: 'Sėkmingai pridėta nauja grupė!',
     Error_Text: 'Kažkas nepavyko! Bandykite dar kartą.'
   },
-  DarkMode: 'Tamsus režimas'
+  DarkMode: 'Tamsus režimas',
+  Guest: 'Svečias',
+  Continue_Without_Account: 'Tęsti be paskyros'
 }
 export const TEXT_EN = {
   Screens: {
@@ -166,5 +168,7 @@ export const TEXT_EN = {
     Group_Success_Text: 'Successfully added new group!',
     Error_Text: 'Something went wrong! Please try again.'
   },
-  DarkMode: 'Dark mode'
+  DarkMode: 'Dark mode',
+  Guest: 'Guest',
+  Continue_Without_Account: 'Continue without account'
 }

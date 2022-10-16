@@ -21,6 +21,10 @@ export function useAuth() {
     return resp
   }
 
+  async function continueAsGuest() {
+    return await auth().signInAnonymously()
+  }
+
   async function loginUserWithEmailAndPass(email, password) {
     return await auth()
       .signInWithEmailAndPassword(email, password)
@@ -60,8 +64,14 @@ export function useAuth() {
     }
   }
 
-  function logout() {
-    return auth().signOut()
+  async function logout() {
+    const isSignedIn = await GoogleSignin.isSignedIn()
+    if (isSignedIn) {
+      await GoogleSignin.revokeAccess()
+      await GoogleSignin.signOut()
+    }
+
+    await auth().signOut()
   }
 
   useEffect(() => {
@@ -76,7 +86,8 @@ export function useAuth() {
     loginWithGoogle,
     loginUserWithEmailAndPass,
     createUserWithEmailAndPass,
-    logout
+    logout,
+    continueAsGuest
   }
 
   return value

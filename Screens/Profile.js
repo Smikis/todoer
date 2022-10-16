@@ -57,7 +57,9 @@ export default function Profile() {
         {user
           ? user.displayName
             ? user.displayName.toUpperCase()
-            : user.email.substring(0, user.email.indexOf('@')).toUpperCase()
+            : user.email
+            ? user.email.substring(0, user.email.indexOf('@')).toUpperCase()
+            : TEXT.Guest
           : null}
       </Text>
       <Pressable style={styles(colors).logout_btn} onPress={logout}>
