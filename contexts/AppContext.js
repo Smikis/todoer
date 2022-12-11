@@ -195,6 +195,26 @@ export function AppProvider({ children }) {
     return 'success'
   }
 
+  function removeTask(groupId, taskId) {
+    let temp = JSON.parse(JSON.stringify(data))
+
+    const groupIndex = temp.groups.findIndex(group => {
+      return group.id === groupId
+    })
+
+    const taskIndex = temp.groups[groupIndex].tasks.findIndex(task => {
+      return task.id === taskId
+    })
+
+    try {
+      temp.groups[groupIndex].tasks.splice(taskIndex, 1)
+    } catch {
+      return 'error'
+    }
+    setData(temp)
+    return 'success'
+  }
+
   async function switchTheme() {
     const newTheme = theme === 'Light' ? 'Dark' : 'Light'
     setTheme(newTheme)
@@ -212,6 +232,7 @@ export function AppProvider({ children }) {
         updateTaskData,
         appendTask,
         removeGroup,
+        removeTask,
         switchTheme,
         loading,
         locale,

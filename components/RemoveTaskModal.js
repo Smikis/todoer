@@ -1,46 +1,36 @@
-import React, { useContext, useState } from 'react'
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Modal,
-  Pressable
-} from 'react-native'
-import PropTypes from 'prop-types'
+/* eslint-disable react-native/no-color-literals */
+import React, { useContext } from 'react'
 
-import Toast from 'react-native-toast-message'
+import PropTypes from 'prop-types'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import AppContext from '../contexts/AppContext'
+import { Toast } from 'react-native-toast-message/lib/src/Toast'
 
-export default function RemoveGroupModal({
+RemoveTaskModal.propTypes = {
+  visible: PropTypes.bool,
+  setVisible: PropTypes.func,
+  task: PropTypes.object,
+  setTaskChosen: PropTypes.func,
+  from: PropTypes.string
+}
+
+export default function RemoveTaskModal({
   visible,
   setVisible,
-  group,
-  setGroupChosen
+  task,
+  setTaskChosen,
+  from
 }) {
-  const [inputText, setInputText] = useState('')
-  const [error, setError] = useState(null)
-  const { TEXT, colors, removeGroup } = useContext(AppContext)
+  const { TEXT, colors, removeTask } = useContext(AppContext)
 
-  function handleExit() {
-    setError(null)
-    setInputText('')
+  const handleExit = () => {
     setVisible(false)
-    setGroupChosen(null)
+    setTaskChosen(null)
   }
 
-  function handleConfirm() {
-    if (inputText === '') {
-      setError(TEXT.Validation.Input_Empty)
-      return
-    }
-    if (inputText.toUpperCase() !== group.group.toUpperCase()) {
-      setError(TEXT.Validation.Incorrect_Input)
-      return
-    }
-
-    const res = removeGroup(group.id)
+  const handleConfirm = () => {
+    const res = removeTask(from, task)
 
     switch (res) {
       case 'success':
@@ -66,39 +56,27 @@ export default function RemoveGroupModal({
 
   return (
     <Modal
+      visible={visible || false}
       animationType="fade"
       transparent={true}
-      visible={visible || false}
       onRequestClose={handleExit}>
       <View style={styles(colors).centeredView}>
         <View style={styles(colors).modalView}>
           <Text style={styles(colors).remove_text}>
             {TEXT.Remove_Group_Modal.Remove_Text}
           </Text>
-          <Text style={styles(colors).group_text}>
-            {group ? group.group.toUpperCase() : null}
+          <Text style={styles(colors).task_text}>
+            {task?.value ? task.value.toUpperCase() : null}
           </Text>
-          {error && <Text style={styles(colors).error}>{error}</Text>}
-          <TextInput
-            style={[
-              styles(colors).input,
-              { shadowColor: error ? colors.Danger : 'black' }
-            ]}
-            value={inputText}
-            onChangeText={text => setInputText(text)}
-            placeholder={`${
-              TEXT.Placeholders.Type
-            } ${group?.group.toUpperCase()} ${TEXT.Placeholders.To_Confirm}`}
-            onPressOut={() => setError(null)}
-            placeholderTextColor={'grey'}
-          />
           <View style={styles(colors).buttons}>
             <Pressable
-              onPress={handleConfirm}
-              style={styles(colors).confirm_btn}>
-              <Text style={styles(colors).confirm_text}>{TEXT.Remove}</Text>
+              style={styles(colors).confirm_btn}
+              onPress={() => handleConfirm()}>
+              <Text style={styles(colors).confirm_text}>{TEXT.Confirm}</Text>
             </Pressable>
-            <Pressable onPress={handleExit} style={styles(colors).cancel_btn}>
+            <Pressable
+              style={styles(colors).cancel_btn}
+              onPress={() => handleExit()}>
               <Text style={styles(colors).cancel_text}>{TEXT.Cancel}</Text>
             </Pressable>
           </View>
@@ -106,13 +84,6 @@ export default function RemoveGroupModal({
       </View>
     </Modal>
   )
-}
-
-RemoveGroupModal.propTypes = {
-  visible: PropTypes.bool,
-  setVisible: PropTypes.func,
-  group: PropTypes.object,
-  setGroupChosen: PropTypes.func
 }
 
 const styles = colors =>
@@ -137,10 +108,11 @@ const styles = colors =>
       color: colors.Text,
       padding: 10
     },
-    group_text: {
+    task_text: {
       fontSize: 30,
       fontWeight: 'bold',
-      color: colors.Primary
+      color: colors.Primary,
+      marginBottom: 15
     },
     buttons: {
       display: 'flex',

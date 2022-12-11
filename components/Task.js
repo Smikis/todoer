@@ -20,15 +20,30 @@ Task.propTypes = {
   TEXT: PropTypes.object,
   drag: PropTypes.func,
   group: PropTypes.object,
-  toggleDone: PropTypes.func
+  toggleDone: PropTypes.func,
+  setRemoveTaskModalVisible: PropTypes.func,
+  setChosenTask: PropTypes.func,
+  setRemoveTaskFrom: PropTypes.func
 }
 
-export default function Task({ colors, item, TEXT, drag, group, toggleDone }) {
+export default function Task({
+  colors,
+  item,
+  TEXT,
+  drag,
+  group,
+  toggleDone,
+  setRemoveTaskModalVisible,
+  setChosenTask,
+  setRemoveTaskFrom
+}) {
   const dueIn =
     Math.ceil((item.due - Date.now()) / MILISECONDS_IN_A_DAY) ?? null
   return (
     <ScaleDecorator>
-      <Pressable onLongPress={drag}>
+      <Pressable
+        onLongPress={drag}
+        onPress={() => toggleDone(group.id, item.id)}>
         <View
           style={[
             styles(colors).task,
@@ -50,12 +65,28 @@ export default function Task({ colors, item, TEXT, drag, group, toggleDone }) {
               </Text>
             ) : null}
           </View>
-          <Icon
-            onPress={() => toggleDone(group.id, item.id)}
-            name={'check'}
-            size={25}
-            color={item.isDone ? colors.Check_Done : colors.Check}
-          />
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center'
+            }}>
+            <Icon
+              name={'check'}
+              size={20}
+              color={item.isDone ? colors.Check_Done : colors.Check}
+              style={{ marginRight: 15 }}
+            />
+            <Icon
+              name={'trash'}
+              color={colors.Grey_Text}
+              size={20}
+              onPress={() => {
+                setRemoveTaskModalVisible(true)
+                setChosenTask(item)
+                setRemoveTaskFrom(group.id)
+              }}
+            />
+          </View>
         </View>
       </Pressable>
     </ScaleDecorator>

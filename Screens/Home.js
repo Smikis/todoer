@@ -5,8 +5,7 @@ import {
   View,
   FlatList,
   SafeAreaView,
-  StatusBar,
-  Image
+  StatusBar
 } from 'react-native'
 
 import { getDoneTasks } from '../utils/getDoneTasks'
@@ -17,12 +16,15 @@ import AppContext from '../contexts/AppContext'
 
 import Task from '../components/Task'
 import Group from '../components/Group'
-import { Icon } from 'react-native-vector-icons/Icon'
+import RemoveTaskModal from '../components/RemoveTaskModal'
 
 export default function Home() {
   const [stopScroll, setStopScroll] = useState(false)
   const [removeModalVisible, setRemoveModalVisible] = useState(false)
   const [chosenGroup, setChosenGroup] = useState()
+  const [removeTaskModalVisible, setRemoveTaskModalVisible] = useState(false)
+  const [chosenTask, setChosenTask] = useState()
+  const [removeTaskFrom, setRemoveTaskFrom] = useState()
 
   const {
     data,
@@ -43,6 +45,9 @@ export default function Home() {
         group={group}
         item={item}
         toggleDone={toggleDone}
+        setRemoveTaskModalVisible={setRemoveTaskModalVisible}
+        setChosenTask={setChosenTask}
+        setRemoveTaskFrom={setRemoveTaskFrom}
       />
     )
   }
@@ -98,6 +103,13 @@ export default function Home() {
         group={chosenGroup}
         setVisible={setRemoveModalVisible}
         setGroupChosen={setChosenGroup}
+      />
+      <RemoveTaskModal
+        visible={removeTaskModalVisible}
+        setVisible={setRemoveTaskModalVisible}
+        setTaskChosen={setChosenTask}
+        task={chosenTask}
+        from={removeTaskFrom}
       />
     </SafeAreaView>
   )

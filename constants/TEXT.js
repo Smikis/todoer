@@ -75,10 +75,10 @@ export const TEXT_LT = {
   },
   Toast: {
     Success: 'Valio!',
-    Remove_Success_Text: 'Sėkmingai panaikinta grupė',
+    Remove_Success_Text: 'Sėkmingai panaikinta!',
     Error: 'Klaida!',
-    Task_Success_Text: 'Sėkmingai pridėta nauja veikla!',
-    Group_Success_Text: 'Sėkmingai pridėta nauja grupė!',
+    Task_Success_Text: 'Sėkmingai pridėta!',
+    Group_Success_Text: 'Sėkmingai pridėta!',
     Error_Text: 'Kažkas nepavyko! Bandykite dar kartą.'
   },
   DarkMode: 'Tamsus režimas',
