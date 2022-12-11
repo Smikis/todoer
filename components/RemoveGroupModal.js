@@ -151,7 +151,7 @@ const styles = colors =>
     },
     confirm_btn: {
       padding: 15,
-      borderRadius: 5,
+      borderRadius: 3,
       borderColor: colors.Danger,
       borderWidth: 2,
       backgroundColor: colors.Background,
@@ -165,7 +165,7 @@ const styles = colors =>
       padding: 15,
       backgroundColor: colors.Background,
       elevation: 5,
-      borderRadius: 5
+      borderRadius: 3
     },
     cancel_text: {
       color: colors.Text,
@@ -173,7 +173,7 @@ const styles = colors =>
     },
     input: {
       margin: 15,
-      borderRadius: 5,
+      borderRadius: 3,
       padding: 15,
       width: '90%',
       elevation: 5,

@@ -243,7 +243,7 @@ const styles = colors =>
       alignItems: 'center',
       backgroundColor: colors.Primary,
       padding: 15,
-      borderRadius: 5,
+      borderRadius: 3,
       display: 'flex',
       flexDirection: 'row',
       alignContent: 'center',

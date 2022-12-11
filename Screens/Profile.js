@@ -6,7 +6,8 @@ import {
   Image,
   Pressable,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  ActivityIndicator
 } from 'react-native'
 
 import { Switch } from 'react-native'
@@ -21,6 +22,19 @@ export default function Profile() {
   const { TEXT, switchTheme, theme, colors } = useContext(AppContext)
 
   const { user, logout } = useAuth()
+
+  const [loading, setLoading] = React.useState(false)
+
+  const handleLogout = async () => {
+    try {
+      setLoading(true)
+      await logout()
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <SafeAreaView style={styles(colors).profile_container}>
@@ -62,7 +76,7 @@ export default function Profile() {
             : TEXT.Guest
           : null}
       </Text>
-      <Pressable style={styles(colors).logout_btn} onPress={logout}>
+      <Pressable style={styles(colors).logout_btn} onPress={handleLogout}>
         <View
           style={{
             display: 'flex',
@@ -70,8 +84,14 @@ export default function Profile() {
             justifyContent: 'space-around',
             alignItems: 'center'
           }}>
-          <Text style={styles(colors).logout_btn_text}>{TEXT.Log_Out}</Text>
-          <Icon name="sign-out" color={'white'} size={20} />
+          <Text style={styles(colors).logout_btn_text}>
+            {loading ? (
+              <ActivityIndicator size={20} color={colors.Text_Btn_Blue} />
+            ) : (
+              TEXT.Log_Out
+            )}
+          </Text>
+          {loading ? null : <Icon name="sign-out" color={'white'} size={20} />}
         </View>
       </Pressable>
       <View style={{ display: 'flex', flexDirection: 'row' }}>
@@ -126,7 +146,7 @@ const styles = colors =>
     logout_btn: {
       backgroundColor: colors.Primary,
       padding: 10,
-      borderRadius: 5,
+      borderRadius: 3,
       width: 200,
       margin: 25
     },

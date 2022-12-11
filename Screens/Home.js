@@ -5,7 +5,8 @@ import {
   View,
   FlatList,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Image
 } from 'react-native'
 
 import { getDoneTasks } from '../utils/getDoneTasks'
@@ -16,6 +17,7 @@ import AppContext from '../contexts/AppContext'
 
 import Task from '../components/Task'
 import Group from '../components/Group'
+import { Icon } from 'react-native-vector-icons/Icon'
 
 export default function Home() {
   const [stopScroll, setStopScroll] = useState(false)

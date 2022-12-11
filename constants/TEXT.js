@@ -11,7 +11,7 @@ export const TEXT_LT = {
     Due_Tomorrow: 'Baigsis rytoj!',
     Due_In: 'Baigsis po',
     Days: ' dienos(ų)!',
-    Has_End_Date: 'Turi pabaigos datą'
+    Has_End_Date: 'Atsiųsti priminimą'
   },
   Loading: 'Kraunama...',
   Validation: {
@@ -98,7 +98,7 @@ export const TEXT_EN = {
     Due_Tomorrow: 'Due tomorrow!',
     Due_In: 'Due in',
     Days: 'day(s)!',
-    Has_End_Date: 'Has end date'
+    Has_End_Date: 'Send notification'
   },
   Loading: 'Loading...',
   Validation: {

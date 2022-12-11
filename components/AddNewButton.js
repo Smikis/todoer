@@ -289,7 +289,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
                 />
                 <DatePicker
                   modal
-                  mode="date"
+                  mode="datetime"
                   open={datePickerOpen}
                   date={date}
                   onConfirm={date => {
@@ -418,7 +418,7 @@ const styles = colors =>
     button: {
       padding: 15,
       backgroundColor: colors.Primary,
-      borderRadius: 5,
+      borderRadius: 3,
       width: 100,
       elevation: 5
     },

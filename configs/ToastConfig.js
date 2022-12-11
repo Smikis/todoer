@@ -12,7 +12,7 @@ export const toastConfig = {
         borderLeftColor: props.colors.Primary,
         borderLeftWidth: 5,
         elevation: 10,
-        borderRadius: 5
+        borderRadius: 3
       }}>
       <Text
         style={{
@@ -39,7 +39,7 @@ export const toastConfig = {
         borderLeftColor: props.colors.Danger,
         borderLeftWidth: 5,
         elevation: 10,
-        borderRadius: 5
+        borderRadius: 3
       }}>
       <Text
         style={{

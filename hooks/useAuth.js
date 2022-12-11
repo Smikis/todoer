@@ -7,7 +7,7 @@ import {
   statusCodes
 } from '@react-native-google-signin/google-signin'
 
-import { WEBCLIENTID } from '../constants/CONSTANTS'
+import { removeData } from './useDb'
 
 export function useAuth() {
   const [user, setUser] = useState()
@@ -34,9 +34,6 @@ export function useAuth() {
   }
 
   async function loginWithGoogle() {
-    GoogleSignin.configure({
-      webClientId: WEBCLIENTID
-    })
     try {
       await GoogleSignin.hasPlayServices()
 
@@ -67,11 +64,27 @@ export function useAuth() {
   async function logout() {
     const isSignedIn = await GoogleSignin.isSignedIn()
     if (isSignedIn) {
-      await GoogleSignin.revokeAccess()
-      await GoogleSignin.signOut()
+      try {
+        await GoogleSignin.revokeAccess()
+        await GoogleSignin.signOut()
+        await auth().signOut()
+      } catch (e) {
+        console.log(e)
+      }
+    } else if (user.isAnonymous) {
+      try {
+        await removeData(user.uid)
+        await auth().currentUser.delete()
+      } catch (e) {
+        console.log(e)
+      }
+    } else {
+      try {
+        await auth().signOut()
+      } catch (e) {
+        console.log(e)
+      }
     }
-
-    await auth().signOut()
   }
 
   useEffect(() => {

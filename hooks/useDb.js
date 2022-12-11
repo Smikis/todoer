@@ -4,6 +4,16 @@ import { useAuth } from './useAuth'
 
 import { DATABASE_URL } from '../constants/CONSTANTS'
 
+export async function removeData(uid) {
+  try {
+    const reference = firebase.app().database(DATABASE_URL).ref(`/users/${uid}`)
+
+    await reference.remove()
+  } catch (e) {
+    console.log('removeData:', e)
+  }
+}
+
 export function useDb() {
   const { user } = useAuth()
 

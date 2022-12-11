@@ -67,7 +67,7 @@ const styles = colors =>
     task: {
       padding: 15,
       backgroundColor: colors.Primary,
-      borderRadius: 5,
+      borderRadius: 3,
       elevation: 5,
       marginBottom: 10,
       marginTop: 10,
