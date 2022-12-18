@@ -1,6 +1,7 @@
 import notifee, {
   AndroidImportance,
   AndroidNotificationSetting,
+  RepeatFrequency,
   TriggerType
 } from '@notifee/react-native'
 
@@ -24,14 +25,19 @@ export async function onCreateTriggerNotification(
   channelId,
   taskId,
   task,
-  TEXT
+  TEXT,
+  toggleRepeating
 ) {
   const settings = await notifee.getNotificationSettings()
 
   if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
     const trigger = {
       type: TriggerType.TIMESTAMP,
-      timestamp: getNotifTimestamp(dueDate)
+      timestamp: getNotifTimestamp(dueDate),
+      RepeatFrequency: toggleRepeating ? RepeatFrequency.DAILY : null,
+      alarmManager: {
+        allowWhileIdle: true
+      }
     }
 
     try {

@@ -30,7 +30,7 @@ export default function RemoveTaskModal({
   }
 
   const handleConfirm = () => {
-    const res = removeTask(from, task)
+    const res = removeTask(from, task.id)
 
     switch (res) {
       case 'success':

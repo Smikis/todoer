@@ -12,6 +12,8 @@ import {
   createNotifChannelId
 } from '../services/TriggerNotifications'
 
+import notifee from '@notifee/react-native'
+
 import PropTypes from 'prop-types'
 
 import { createUID } from '../utils/createUID'
@@ -131,7 +133,7 @@ export function AppProvider({ children }) {
     setData(temp)
   }
 
-  async function appendTask(groupId, inputText, dueDate) {
+  async function appendTask(groupId, inputText, dueDate, toggleRepeating) {
     let temp = JSON.parse(JSON.stringify(data))
 
     const index = temp.groups.findIndex(group => {
@@ -144,7 +146,8 @@ export function AppProvider({ children }) {
       id: taskId,
       isDone: false,
       value: inputText,
-      due: dueDate ? Date.parse(dueDate) : null
+      due: dueDate ? Date.parse(dueDate) : null,
+      repeating: toggleRepeating
     }
 
     try {
@@ -168,7 +171,8 @@ export function AppProvider({ children }) {
         channelId,
         taskId,
         inputText,
-        TEXT
+        TEXT,
+        toggleRepeating
       )
     }
 
@@ -206,12 +210,16 @@ export function AppProvider({ children }) {
       return task.id === taskId
     })
 
+    console.log('taskIndex', taskIndex)
+
     try {
       temp.groups[groupIndex].tasks.splice(taskIndex, 1)
     } catch {
       return 'error'
     }
     setData(temp)
+    notifee.cancelNotification(taskId)
+
     return 'success'
   }
 

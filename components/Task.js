@@ -49,13 +49,15 @@ export default function Task({
             styles(colors).task,
             {
               backgroundColor:
-                dueIn >= 0 && !item.isDone ? colors.Danger : colors.Primary,
+                dueIn >= 0 && !item.isDone && !item.repeating
+                  ? colors.Danger
+                  : colors.Primary,
               borderLeftColor: item.isDone ? colors.Check_Done : colors.Check
             }
           ]}>
           <View style={{ flexShrink: 1 }}>
             <Text style={styles(colors).task_text}>{item.value}</Text>
-            {dueIn >= 0 && !item.isDone ? (
+            {dueIn >= 0 && !item.isDone && !item.repeating ? (
               <Text style={styles(colors).due_text}>
                 {isToday(item.due) === true
                   ? TEXT.Home.Due_Today
@@ -63,6 +65,8 @@ export default function Task({
                   ? TEXT.Home.Due_Tomorrow
                   : `${TEXT.Home.Due_In} ${dueIn} ${TEXT.Home.Days} `}
               </Text>
+            ) : item.repeating ? (
+              <Text style={styles(colors).due_text}>{TEXT.Home.Repeating}</Text>
             ) : null}
           </View>
           <View
@@ -116,6 +120,7 @@ const styles = colors =>
     },
     due_text: {
       color: colors.Task_Text,
-      paddingTop: 5
+      paddingTop: 5,
+      fontWeight: 'bold'
     }
   })

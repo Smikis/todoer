@@ -35,6 +35,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
   const [date, setDate] = useState(new Date())
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [toggleCheckBox, setToggleCheckBox] = useState(false)
+  const [toggleRepeating, setToggleRepeating] = useState(false)
   const [dateError, setDateError] = useState(null)
   const { data, appendGroup, TEXT, appendTask, colors } = useContext(AppContext)
   const [dateBtnText, setDateBtnText] = useState(TEXT.Placeholders.Select)
@@ -56,6 +57,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
     setGroupChosenId()
     setDateBtnText(TEXT.Placeholders.Select)
     setToggleCheckBox(false)
+    setToggleRepeating(false)
     setDatePickerOpen(false)
     clearErrors()
   }
@@ -77,7 +79,7 @@ export default function AddNewButton({ changeVisibility, visible }) {
         setDateError(TEXT.Validation.Date_Must_Be_In_Future)
         return
       } else {
-        res = await appendTask(groupChosenId, inputText, date)
+        res = await appendTask(groupChosenId, inputText, date, toggleRepeating)
       }
     } else {
       res = await appendTask(groupChosenId, inputText)
@@ -273,6 +275,28 @@ export default function AddNewButton({ changeVisibility, visible }) {
                         {dateBtnText}
                       </Text>
                     </Pressable>
+                    <View
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'flex-start',
+                        width: '100%',
+                        marginTop: 10
+                      }}>
+                      <CheckBox
+                        disabled={false}
+                        value={toggleRepeating}
+                        onValueChange={newValue => setToggleRepeating(newValue)}
+                        tintColors={{
+                          true: colors.Primary,
+                          false: colors.Grey_Text
+                        }}
+                      />
+                      <Text style={{ color: colors.Text, marginLeft: 20 }}>
+                        {TEXT.Home.Repeating}
+                      </Text>
+                    </View>
                   </>
                 )}
                 {error && <Text style={styles(colors).error}>{error}</Text>}
