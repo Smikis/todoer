@@ -4,9 +4,6 @@ import { ScaleDecorator } from 'react-native-draggable-flatlist'
 
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 
-import { isToday } from '../utils/dates/isToday'
-import { isTomorrow } from '../utils/dates/isTomorrow'
-
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import PropTypes from 'prop-types'
@@ -45,7 +42,10 @@ export default function Task({
     <ScaleDecorator>
       <Pressable
         onLongPress={drag}
-        onPress={() => toggleDone(group.id, item.id)}>
+        onPress={() => {
+          if (item.repeating || item.due - Date.now() <= 0) return
+          toggleDone(group.id, item.id)
+        }}>
         <View
           style={[
             styles(colors).task,
@@ -96,7 +96,7 @@ export default function Task({
               height: '100%',
               paddingLeft: 20
             }}>
-            {!item.repeating ? (
+            {(!item.repeating && item.due - Date.now() >= 0) || !item.due ? (
               <Icon
                 name={'check'}
                 size={20}

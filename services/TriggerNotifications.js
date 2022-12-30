@@ -5,6 +5,8 @@ import notifee, {
   TriggerType
 } from '@notifee/react-native'
 
+import NotificationSounds from 'react-native-notification-sounds'
+
 import { getNotifTimestamp } from '../utils/getNotifTimestamp'
 
 import { Alert } from 'react-native'
@@ -12,12 +14,16 @@ import { Alert } from 'react-native'
 import { displayName as appName } from '../app.json'
 
 export async function createNotifChannelId() {
+  await notifee.deleteChannel('notification-channel')
+
+  const soundsList = await NotificationSounds.getNotifications('notification')
+
   const channelId = await notifee.createChannel({
     id: 'notification-channel',
     name: 'Reminders',
-    importance: AndroidImportance.DEFAULT,
+    importance: AndroidImportance.HIGH,
     vibration: true,
-    sound: 'default'
+    sound: soundsList[0].uri
   })
   return channelId
 }
