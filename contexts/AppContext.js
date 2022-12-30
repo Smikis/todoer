@@ -66,7 +66,8 @@ export function AppProvider({ children }) {
       id: createUID(),
       group: inputText,
       tasks: [],
-      collapsed: false
+      collapsed: false,
+      order: 0
     }
 
     try {
@@ -229,6 +230,67 @@ export function AppProvider({ children }) {
     await setItem(newTheme)
   }
 
+  function sortTasks(groupId, sorting, sort) {
+    let temp = JSON.parse(JSON.stringify(data))
+
+    const groupIndex = temp.groups.findIndex(group => {
+      return group.id === groupId
+    })
+
+    temp.groups[groupIndex].order = sort
+
+    switch (sorting) {
+      case 'byDateASC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          var dateA = new Date(a.due)
+          var dateB = new Date(b.due)
+          if (!dateA.toJSON()) {
+            return 1
+          }
+          if (!dateB.toJSON()) {
+            return -1
+          }
+          return dateA - dateB
+        })
+        break
+      case 'byDateDESC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          var dateA = new Date(a.due)
+          var dateB = new Date(b.due)
+          if (!dateA.toJSON()) {
+            return 1
+          }
+          if (!dateB.toJSON()) {
+            return -1
+          }
+          return dateB - dateA
+        })
+        break
+      case 'byNameDESC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          return b.value.localeCompare(a.value)
+        })
+        break
+      case 'byNameASC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          return a.value.localeCompare(b.value)
+        })
+        break
+      case 'byDoneASC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          return a.isDone - b.isDone
+        })
+        break
+      case 'byDoneDESC':
+        temp.groups[groupIndex].tasks.sort((a, b) => {
+          return b.isDone - a.isDone
+        })
+        break
+    }
+
+    setData(temp)
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -246,7 +308,8 @@ export function AppProvider({ children }) {
         locale,
         TEXT,
         colors,
-        theme
+        theme,
+        sortTasks
       }}>
       {children}
     </AppContext.Provider>

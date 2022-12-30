@@ -15,7 +15,9 @@ export async function createNotifChannelId() {
   const channelId = await notifee.createChannel({
     id: 'notification-channel',
     name: 'Reminders',
-    importance: AndroidImportance.DEFAULT
+    importance: AndroidImportance.DEFAULT,
+    vibration: true,
+    sound: 'default'
   })
   return channelId
 }
@@ -45,7 +47,7 @@ export async function onCreateTriggerNotification(
         {
           id: taskId,
           title: appName,
-          body: `"${task}" ${TEXT.Notifications.Due_Soon}`,
+          body: `${TEXT.Notifications.Due_Soon} "${task}"!`,
           android: {
             channelId: channelId,
             pressAction: {

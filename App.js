@@ -22,6 +22,8 @@ import { toastConfig } from './configs/ToastConfig'
 
 const Tab = createBottomTabNavigator()
 
+Text.defaultProps = { ...Text.defaultProps, allowFontScaling: false } // Disable font scaling
+
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false)
 

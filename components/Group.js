@@ -2,13 +2,31 @@ import React from 'react'
 
 import { StyleSheet, Text, View, Pressable } from 'react-native'
 
-import Icon from 'react-native-vector-icons/FontAwesome'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 
 import DraggableFlatList from 'react-native-draggable-flatlist'
 
 import PropTypes from 'prop-types'
+
+const ordering = {
+  0: 'byDateDESC',
+  1: 'byDateASC',
+  2: 'byNameDESC',
+  3: 'byNameASC',
+  4: 'byDoneDESC',
+  5: 'byDoneASC'
+}
+
+const orderIcon = {
+  0: 'order-numeric-descending',
+  1: 'order-numeric-ascending',
+  2: 'order-alphabetical-descending',
+  3: 'order-alphabetical-ascending',
+  4: 'order-bool-descending',
+  5: 'order-bool-ascending'
+}
 
 export default function Group({
   item,
@@ -22,8 +40,15 @@ export default function Group({
   updateTaskData,
   setStopScroll,
   renderTasks,
-  TEXT
+  TEXT,
+  sortTasks
 }) {
+  const [order, setOrder] = React.useState(item.order || 0)
+
+  React.useEffect(() => {
+    sortTasks(item.id, ordering[order], order)
+  }, [order])
+
   return (
     <View style={styles(colors).group}>
       <Pressable
@@ -38,13 +63,27 @@ export default function Group({
         <View style={styles(colors).group_header}>
           <Icon
             style={{ marginRight: 15 }}
-            name={item.collapsed === false ? 'angle-down' : 'angle-right'}
+            name={item.collapsed === false ? 'chevron-down' : 'chevron-right'}
             size={40}
             color={colors.Grey_Text}
           />
           <Text style={styles(colors).group_text}>
             {item.group.toUpperCase() + ` - ${doneTasks} / ${allTasks}`}
           </Text>
+          <Icon
+            onPress={() => {
+              setOrder(order === 5 ? 0 : order + 1)
+            }}
+            name={orderIcon[order]}
+            size={30}
+            color={colors.Grey_Text}
+            style={{
+              marginLeft: 15,
+              borderColor: colors.Grey_Text,
+              borderWidth: 1,
+              borderRadius: 5
+            }}
+          />
         </View>
         <Pressable
           onPress={() => {
@@ -83,7 +122,8 @@ Group.propTypes = {
   setStopScroll: PropTypes.func,
   parentRef: PropTypes.object,
   renderTasks: PropTypes.func,
-  TEXT: PropTypes.object
+  TEXT: PropTypes.object,
+  sortTasks: PropTypes.func
 }
 
 const styles = colors =>

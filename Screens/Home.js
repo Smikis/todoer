@@ -33,7 +33,8 @@ export default function Home() {
     updateTaskData,
     TEXT,
     colors,
-    theme
+    theme,
+    sortTasks
   } = useContext(AppContext)
 
   function renderTasks(item, drag, group) {
@@ -70,6 +71,7 @@ export default function Home() {
         setChosenGroup={setChosenGroup}
         setRemoveModalVisible={setRemoveModalVisible}
         setStopScroll={setStopScroll}
+        sortTasks={sortTasks}
       />
     )
   }

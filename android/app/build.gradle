@@ -84,6 +84,10 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialCommunityIcons.ttf', 'FontAwesome.ttf' ] // Name of the font files you want to copy
+]
+
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
 /**
@@ -140,8 +144,8 @@ android {
         applicationId "com.notesapprv1"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.2"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {

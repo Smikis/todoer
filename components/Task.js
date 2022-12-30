@@ -11,6 +11,8 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 
 import PropTypes from 'prop-types'
 
+import { getDueText } from '../utils/getDueText'
+
 const MILISECONDS_IN_A_DAY = 86400000
 
 Task.propTypes = {
@@ -49,41 +51,64 @@ export default function Task({
             styles(colors).task,
             {
               backgroundColor:
-                dueIn >= 0 && !item.isDone && !item.repeating
+                dueIn <= 1 && !item.isDone && !item.repeating
                   ? colors.Danger
                   : colors.Primary,
-              borderLeftColor: item.isDone ? colors.Check_Done : colors.Check
+              borderLeftColor:
+                item.isDone && !item.repeating
+                  ? colors.Check_Done
+                  : colors.Check
             }
           ]}>
           <View style={{ flexShrink: 1 }}>
             <Text style={styles(colors).task_text}>{item.value}</Text>
-            {dueIn >= 0 && !item.isDone && !item.repeating ? (
-              <Text style={styles(colors).due_text}>
-                {isToday(item.due) === true
-                  ? TEXT.Home.Due_Today
-                  : isTomorrow(item.due) === true
-                  ? TEXT.Home.Due_Tomorrow
-                  : `${TEXT.Home.Due_In} ${dueIn} ${TEXT.Home.Days} `}
-              </Text>
-            ) : item.repeating ? (
-              <Text style={styles(colors).due_text}>{TEXT.Home.Repeating}</Text>
-            ) : null}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingVertical: 10
+              }}>
+              {item.due ? (
+                <Icon
+                  name={'clock-o'}
+                  size={15}
+                  color={colors.Grey_Text}
+                  style={{ marginRight: 5 }}
+                />
+              ) : null}
+              {item.due && !item.isDone && !item.repeating ? (
+                <Text style={styles(colors).due_text}>
+                  {getDueText(item.due, TEXT)}
+                </Text>
+              ) : item.repeating ? (
+                <Text style={styles(colors).due_text}>
+                  {TEXT.Home.Repeating}
+                </Text>
+              ) : null}
+            </View>
           </View>
           <View
             style={{
               flexDirection: 'row',
-              alignItems: 'center'
+              alignItems: 'center',
+              borderLeftColor: colors.Grey_Text,
+              borderLeftWidth: 1,
+              height: '100%',
+              paddingLeft: 20
             }}>
+            {!item.repeating ? (
+              <Icon
+                name={'check'}
+                size={20}
+                color={item.isDone ? colors.Check_Done : colors.Check}
+                style={{ marginRight: 20 }}
+              />
+            ) : null}
             <Icon
-              name={'check'}
-              size={20}
-              color={item.isDone ? colors.Check_Done : colors.Check}
-              style={{ marginRight: 15 }}
-            />
-            <Icon
-              name={'trash'}
+              name={'trash-o'}
               color={colors.Grey_Text}
               size={20}
+              style={{ marginRight: 10 }}
               onPress={() => {
                 setRemoveTaskModalVisible(true)
                 setChosenTask(item)
@@ -120,7 +145,7 @@ const styles = colors =>
     },
     due_text: {
       color: colors.Task_Text,
-      paddingTop: 5,
-      fontWeight: 'bold'
+      fontWeight: 'bold',
+      fontSize: 10
     }
   })

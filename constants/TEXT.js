@@ -12,7 +12,13 @@ export const TEXT_LT = {
     Due_In: 'Baigsis po',
     Days: ' dienos(ų)!',
     Has_End_Date: 'Atsiųsti priminimą',
-    Repeating: 'Pasikartojantis kiekvieną dieną'
+    Repeating: 'Pasikartojantis kiekvieną dieną',
+    Overdue: 'Atlikimo laikas baigėsi!',
+    NotifSentIn: 'Priminimas bus išsiųstas po',
+    Hours: 'valandos(ų)!',
+    Minutes: 'minutės(čių)!',
+    Months: 'mėnesio(ų)!',
+    Soon: 'Priminimas bus išsiųstas netrukus!'
   },
   Loading: 'Kraunama...',
   Validation: {
@@ -68,7 +74,7 @@ export const TEXT_LT = {
   Confirm: 'Patvirtinti',
   Cancel: 'Atšaukti',
   Notifications: {
-    Due_Soon: 'laikas netrukus baigsis',
+    Due_Soon: 'Nepamirškite apie',
     Notifications: 'Pranešimai',
     Notif_Alert_Body:
       'Jeigu norite gauti pranešimus, duokite leidimą per nustatymus.',
@@ -100,7 +106,13 @@ export const TEXT_EN = {
     Due_In: 'Due in',
     Days: 'day(s)!',
     Has_End_Date: 'Send notification',
-    Repeating: 'Repeating every day'
+    Repeating: 'Repeating every day',
+    Overdue: 'Due date has passed!',
+    NotifSentIn: 'Notification will be sent in',
+    Hours: 'hour(s)!',
+    Minutes: 'minute(s)!',
+    Months: 'month(s)!',
+    Soon: 'Notification will be sent soon!'
   },
   Loading: 'Loading...',
   Validation: {
@@ -156,7 +168,7 @@ export const TEXT_EN = {
   Confirm: 'Confirm',
   Cancel: 'Cancel',
   Notifications: {
-    Due_Soon: 'is due soon!',
+    Due_Soon: 'Do not forget about',
     Notifications: 'Notifications',
     Notif_Alert_Body:
       'If you want to receive notifications, please enable them in the settings.',
