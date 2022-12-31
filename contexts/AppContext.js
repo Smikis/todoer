@@ -7,10 +7,7 @@ import { useLanguage } from '../hooks/useLanguage'
 import { getColorsByTheme } from '../services/getColorByTheme'
 import { getTextBasedOnLocale } from '../services/getTextBasedOnLanguage'
 import { onCreateTriggerNotification } from '../services/TriggerNotifications'
-import {
-  cancelNotifications,
-  createNotifChannelId
-} from '../services/TriggerNotifications'
+import { cancelNotifications } from '../services/TriggerNotifications'
 
 import notifee from '@notifee/react-native'
 
@@ -33,8 +30,16 @@ export function AppProvider({ children }) {
   const { user } = useAuth(() => setData)
   const TEXT = getTextBasedOnLocale(locale)
   const colors = getColorsByTheme(theme)
-  const [channelId, setChannelId] = useState('')
   const { getItem, setItem } = useAsyncStorage('@user_theme')
+
+  const ordering = {
+    0: 'byDateDESC',
+    1: 'byDateASC',
+    2: 'byNameDESC',
+    3: 'byNameASC',
+    4: 'byDoneDESC',
+    5: 'byDoneASC'
+  }
 
   useEffect(() => {
     if (user) {
@@ -42,11 +47,9 @@ export function AppProvider({ children }) {
         try {
           setLoading(true)
           const initData = await readData()
-          const notifChannel = await createNotifChannelId()
           const user_theme = await getItem()
           if (user_theme !== null && user_theme !== theme) setTheme(user_theme)
           setData(initData)
-          setChannelId(notifChannel)
           setLoading(false)
         } catch (e) {
           console.log(e)
@@ -169,7 +172,6 @@ export function AppProvider({ children }) {
     if (dueDate) {
       await onCreateTriggerNotification(
         dueDate,
-        channelId,
         taskId,
         inputText,
         TEXT,
@@ -211,8 +213,6 @@ export function AppProvider({ children }) {
       return task.id === taskId
     })
 
-    console.log('taskIndex', taskIndex)
-
     try {
       temp.groups[groupIndex].tasks.splice(taskIndex, 1)
     } catch {
@@ -238,54 +238,57 @@ export function AppProvider({ children }) {
     })
 
     temp.groups[groupIndex].order = sort
-
-    switch (sorting) {
-      case 'byDateASC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          var dateA = new Date(a.due)
-          var dateB = new Date(b.due)
-          if (!dateA.toJSON()) {
-            return 1
-          }
-          if (!dateB.toJSON()) {
-            return -1
-          }
-          return dateA - dateB
-        })
-        break
-      case 'byDateDESC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          var dateA = new Date(a.due)
-          var dateB = new Date(b.due)
-          if (!dateA.toJSON()) {
-            return 1
-          }
-          if (!dateB.toJSON()) {
-            return -1
-          }
-          return dateB - dateA
-        })
-        break
-      case 'byNameDESC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          return b.value.localeCompare(a.value)
-        })
-        break
-      case 'byNameASC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          return a.value.localeCompare(b.value)
-        })
-        break
-      case 'byDoneASC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          return a.isDone - b.isDone
-        })
-        break
-      case 'byDoneDESC':
-        temp.groups[groupIndex].tasks.sort((a, b) => {
-          return b.isDone - a.isDone
-        })
-        break
+    try {
+      switch (sorting) {
+        case 'byDateASC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            var dateA = new Date(a.due)
+            var dateB = new Date(b.due)
+            if (!dateA.toJSON()) {
+              return 1
+            }
+            if (!dateB.toJSON()) {
+              return -1
+            }
+            return dateA - dateB
+          })
+          break
+        case 'byDateDESC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            var dateA = new Date(a.due)
+            var dateB = new Date(b.due)
+            if (!dateA.toJSON()) {
+              return 1
+            }
+            if (!dateB.toJSON()) {
+              return -1
+            }
+            return dateB - dateA
+          })
+          break
+        case 'byNameDESC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            return b.value.localeCompare(a.value)
+          })
+          break
+        case 'byNameASC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            return a.value.localeCompare(b.value)
+          })
+          break
+        case 'byDoneASC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            return a.isDone - b.isDone
+          })
+          break
+        case 'byDoneDESC':
+          temp.groups[groupIndex].tasks.sort((a, b) => {
+            return b.isDone - a.isDone
+          })
+          break
+      }
+    } catch (e) {
+      console.log('sortTasks error:', e)
     }
 
     setData(temp)

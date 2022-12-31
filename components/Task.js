@@ -43,7 +43,7 @@ export default function Task({
       <Pressable
         onLongPress={drag}
         onPress={() => {
-          if (item.repeating || item.due - Date.now() <= 0) return
+          if (item.repeating || (item.due - Date.now() <= 0 && item.due)) return
           toggleDone(group.id, item.id)
         }}>
         <View
@@ -51,7 +51,7 @@ export default function Task({
             styles(colors).task,
             {
               backgroundColor:
-                dueIn <= 1 && !item.isDone && !item.repeating
+                dueIn <= 1 && item.due && !item.isDone && !item.repeating
                   ? colors.Danger
                   : colors.Primary,
               borderLeftColor:
@@ -126,6 +126,7 @@ const styles = colors =>
   StyleSheet.create({
     task: {
       padding: 15,
+      paddingLeft: 10,
       backgroundColor: colors.Primary,
       borderRadius: 3,
       elevation: 5,
@@ -141,7 +142,8 @@ const styles = colors =>
     },
     task_text: {
       color: colors.Task_Text,
-      fontSize: 17
+      fontSize: 17,
+      paddingHorizontal: 5
     },
     due_text: {
       color: colors.Task_Text,

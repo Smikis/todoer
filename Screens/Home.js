@@ -79,7 +79,7 @@ export default function Home() {
   return (
     <SafeAreaView style={styles(colors).background}>
       <StatusBar
-        backgroundColor={colors.background}
+        backgroundColor={colors.Background}
         barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
       />
       <Text style={styles(colors).header}>{TEXT.Home.Header}</Text>
@@ -125,10 +125,12 @@ const styles = colors =>
     },
     header: {
       textAlign: 'center',
-      fontSize: 30,
+      fontSize: 25,
       padding: 10,
       letterSpacing: 5,
-      color: colors.Grey_Text
+      color: colors.Grey_Text,
+      fontWeight: 'bold',
+      textTransform: 'uppercase'
     },
     no_data: {
       display: 'flex',

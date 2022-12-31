@@ -5,32 +5,25 @@ import notifee, {
   TriggerType
 } from '@notifee/react-native'
 
-import NotificationSounds from 'react-native-notification-sounds'
-
 import { getNotifTimestamp } from '../utils/getNotifTimestamp'
 
 import { Alert } from 'react-native'
 
 import { displayName as appName } from '../app.json'
 
-export async function createNotifChannelId() {
-  await notifee.deleteChannel('notification-channel')
-
-  const soundsList = await NotificationSounds.getNotifications('notification')
-
-  const channelId = await notifee.createChannel({
+// Create a channel for the notifications
+export async function createNotifChannel() {
+  await notifee.createChannel({
     id: 'notification-channel',
     name: 'Reminders',
     importance: AndroidImportance.HIGH,
     vibration: true,
-    sound: soundsList[0].uri
+    sound: 'default'
   })
-  return channelId
 }
 
 export async function onCreateTriggerNotification(
   dueDate,
-  channelId,
   taskId,
   task,
   TEXT,
@@ -38,6 +31,7 @@ export async function onCreateTriggerNotification(
 ) {
   const settings = await notifee.getNotificationSettings()
 
+  // Check if the user has enabled notifications
   if (settings.android.alarm === AndroidNotificationSetting.ENABLED) {
     const trigger = {
       type: TriggerType.TIMESTAMP,
@@ -49,13 +43,14 @@ export async function onCreateTriggerNotification(
     }
 
     try {
+      // Create the notification
       await notifee.createTriggerNotification(
         {
           id: taskId,
           title: appName,
           body: `${TEXT.Notifications.Due_Soon} "${task}"!`,
           android: {
-            channelId: channelId,
+            channelId: 'notification-channel',
             pressAction: {
               id: 'task-is-due',
               launchActivity: 'default'
@@ -67,7 +62,9 @@ export async function onCreateTriggerNotification(
     } catch (e) {
       console.log(e)
     }
-  } else
+  }
+  // If the user hasn't enabled notifications, show an alert
+  else
     Alert.alert(
       TEXT.Notifications.Notifications,
       TEXT.Notifications.Notif_Alert_Body,
@@ -85,6 +82,7 @@ export async function onCreateTriggerNotification(
     )
 }
 
+// Cancel the notification
 export async function cancelNotifications(taskId) {
   await notifee.cancelNotification(taskId)
 }
