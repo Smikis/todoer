@@ -9,14 +9,13 @@ import {
   StatusBar
 } from 'react-native'
 import AppContext from '../contexts/AppContext'
-import PropTypes from 'prop-types'
 
-export default function LoadingScreen({ visible }) {
+export default function LoadingScreen() {
   const { TEXT, colors } = useContext(AppContext)
   return (
     <SafeAreaView style={styles(colors).spinner}>
       <StatusBar
-        backgroundColor={colors.Loading_Spinner_Bg}
+        backgroundColor={colors.Primary}
         barStyle="light-content"
       />
       <Image
@@ -26,17 +25,13 @@ export default function LoadingScreen({ visible }) {
       <View style={{ flex: 1, justifyContent: 'center' }}>
         <ActivityIndicator
           size="large"
-          color={colors.Loading_Spinner}
-          animating={visible}
+          color={colors.White}
+          animating={true}
         />
         <Text style={styles(colors).loading_text}>{TEXT.Loading}</Text>
       </View>
     </SafeAreaView>
   )
-}
-
-LoadingScreen.propTypes = {
-  visible: PropTypes.bool
 }
 
 const styles = colors =>
@@ -45,10 +40,10 @@ const styles = colors =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.Loading_Spinner_Bg
+      backgroundColor: colors.Primary
     },
     loading_text: {
       fontSize: 30,
-      color: colors.Loading_Text
+      color: colors.White
     }
   })

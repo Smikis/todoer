@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import {
   StyleSheet,
   Text,
@@ -23,7 +23,7 @@ export default function Profile() {
 
   const { user, logout } = useAuth()
 
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleLogout = async () => {
     try {
@@ -37,12 +37,12 @@ export default function Profile() {
   }
 
   return (
-    <SafeAreaView style={styles(colors).profile_container}>
+    <SafeAreaView style={styles(colors, theme).profile_container}>
       <StatusBar
-        backgroundColor={colors.Background}
+        backgroundColor={theme === 'Dark' ? colors.DarkGrey : colors.White}
         barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
       />
-      <View style={styles(colors).pfp}>
+      <View style={styles(colors, theme).pfp}>
         {user ? (
           user.photoURL ? (
             <Image
@@ -56,18 +56,18 @@ export default function Profile() {
             />
           ) : (
             <>
-              <View style={styles(colors).profile_circle} />
+              <View style={styles(colors, theme).profile_circle} />
               <Icon
-                style={styles(colors).icon_style}
+                style={styles(colors, theme).icon_style}
                 name="user-o"
-                color="white"
+                color={colors.White}
                 size={100}
               />
             </>
           )
         ) : null}
       </View>
-      <Text style={styles(colors).username_style}>
+      <Text style={styles(colors, theme).username_style}>
         {user
           ? user.displayName
             ? user.displayName.toUpperCase()
@@ -76,7 +76,7 @@ export default function Profile() {
             : TEXT.Guest
           : null}
       </Text>
-      <Pressable style={styles(colors).logout_btn} onPress={handleLogout}>
+      <Pressable style={styles(colors, theme).logout_btn} onPress={handleLogout}>
         <View
           style={{
             display: 'flex',
@@ -84,27 +84,27 @@ export default function Profile() {
             justifyContent: 'space-around',
             alignItems: 'center'
           }}>
-          <Text style={styles(colors).logout_btn_text}>
+          <Text style={styles(colors, theme).logout_btn_text}>
             {loading ? (
               <ActivityIndicator size={20} color={colors.Text_Btn_Blue} />
             ) : (
               TEXT.Log_Out
             )}
           </Text>
-          {loading ? null : <Icon name="sign-out" color={'white'} size={20} />}
+          {loading ? null : <Icon name="sign-out" color={colors.White} size={20} />}
         </View>
       </Pressable>
       <View style={{ display: 'flex', flexDirection: 'row' }}>
         <Switch
           trackColor={{
-            false: colors.Grey_Text,
-            true: colors.Grey_Text
+            false: colors.Grey,
+            true: colors.LightDarkGrey
           }}
           thumbColor={colors.Primary}
           onValueChange={switchTheme}
           value={theme === 'Light' ? false : true}
         />
-        <Text style={{ color: colors.Text, marginLeft: 15, fontSize: 15 }}>
+        <Text style={{ color: theme === 'Dark' ? colors.White : colors.Black, marginLeft: 15, fontSize: 15 }}>
           {TEXT.DarkMode}
         </Text>
       </View>
@@ -112,17 +112,17 @@ export default function Profile() {
   )
 }
 
-const styles = colors =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     profile_container: {
       alignItems: 'center',
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       display: 'flex',
       flex: 1,
       justifyContent: 'center'
     },
     profile_circle: {
-      backgroundColor: 'grey',
+      backgroundColor: colors.Grey,
       width: 140,
       height: 140,
       borderRadius: 100,
@@ -135,7 +135,7 @@ const styles = colors =>
     },
     username_style: {
       fontSize: 30,
-      color: colors.Text
+      color: theme === 'Dark' ? colors.White : colors.Black,
     },
     pfp: {
       display: 'flex',
@@ -151,7 +151,7 @@ const styles = colors =>
       margin: 25
     },
     logout_btn_text: {
-      color: colors.Text_Btn_Blue,
+      color: colors.White,
       textAlign: 'center',
       fontSize: 20
     }

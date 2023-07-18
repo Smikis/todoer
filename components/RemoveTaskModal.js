@@ -1,17 +1,16 @@
-/* eslint-disable react-native/no-color-literals */
 import React, { useContext } from 'react'
 
 import PropTypes from 'prop-types'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import AppContext from '../contexts/AppContext'
 import { Toast } from 'react-native-toast-message/lib/src/Toast'
+import ModalView from './ModalView'
 
 RemoveTaskModal.propTypes = {
   visible: PropTypes.bool,
   setVisible: PropTypes.func,
   task: PropTypes.object,
-  setTaskChosen: PropTypes.func,
   from: PropTypes.string
 }
 
@@ -19,14 +18,12 @@ export default function RemoveTaskModal({
   visible,
   setVisible,
   task,
-  setTaskChosen,
   from
 }) {
-  const { TEXT, colors, removeTask } = useContext(AppContext)
+  const { TEXT, colors, removeTask, theme } = useContext(AppContext)
 
   const handleExit = () => {
     setVisible(false)
-    setTaskChosen(null)
   }
 
   const handleConfirm = () => {
@@ -38,7 +35,7 @@ export default function RemoveTaskModal({
           type: 'successToast',
           text1: TEXT.Toast.Success,
           text2: `${TEXT.Toast.Remove_Success_Text}`,
-          props: { colors: colors }
+          props: { colors: colors, theme: theme }
         })
         break
       case 'error':
@@ -46,7 +43,7 @@ export default function RemoveTaskModal({
           type: 'errorToast',
           text1: TEXT.Toast.Error,
           text2: TEXT.Toast.Error_Text,
-          props: { colors: colors }
+          props: { colors: colors, theme: theme }
         })
         break
     }
@@ -55,57 +52,55 @@ export default function RemoveTaskModal({
   }
 
   return (
-    <Modal
-      visible={visible || false}
-      animationType="fade"
-      transparent={true}
-      onRequestClose={handleExit}>
-      <View style={styles(colors).centeredView}>
-        <View style={styles(colors).modalView}>
-          <Text style={styles(colors).remove_text}>
+    <ModalView
+      visible={visible}
+      handleExit={handleExit}
+    >
+      <View style={styles(colors, theme).centeredView}>
+        <View style={styles(colors, theme).modalView}>
+          <Text style={styles(colors, theme).remove_text}>
             {TEXT.Remove_Group_Modal.Remove_Text}
           </Text>
-          <Text style={styles(colors).task_text}>
+          <Text style={styles(colors, theme).task_text}>
             {task?.value ? task.value.toUpperCase() : null}
           </Text>
-          <View style={styles(colors).buttons}>
+          <View style={styles(colors, theme).buttons}>
             <Pressable
-              style={styles(colors).confirm_btn}
+              style={styles(colors, theme).confirm_btn}
               onPress={() => handleConfirm()}>
-              <Text style={styles(colors).confirm_text}>{TEXT.Confirm}</Text>
+              <Text style={styles(colors, theme).confirm_text}>{TEXT.Confirm}</Text>
             </Pressable>
             <Pressable
-              style={styles(colors).cancel_btn}
+              style={styles(colors, theme).cancel_btn}
               onPress={() => handleExit()}>
-              <Text style={styles(colors).cancel_text}>{TEXT.Cancel}</Text>
+              <Text style={styles(colors, theme).cancel_text}>{TEXT.Cancel}</Text>
             </Pressable>
           </View>
         </View>
       </View>
-    </Modal>
+    </ModalView>
   )
 }
 
-const styles = colors =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     centeredView: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
       padding: 20
     },
     modalView: {
       borderRadius: 10,
       alignItems: 'center',
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5,
       padding: 20,
       width: '100%'
     },
     remove_text: {
       fontSize: 20,
-      color: colors.Text,
+      color: theme === 'Dark' ? colors.White : colors.Black,
       padding: 10
     },
     task_text: {
@@ -124,37 +119,23 @@ const styles = colors =>
     confirm_btn: {
       padding: 15,
       borderRadius: 3,
-      borderColor: colors.Danger,
+      borderColor: colors.Red,
       borderWidth: 2,
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5
     },
     confirm_text: {
-      color: colors.Danger,
+      color: colors.Red,
       fontSize: 15
     },
     cancel_btn: {
       padding: 15,
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5,
       borderRadius: 3
     },
     cancel_text: {
-      color: colors.Text,
+      color: theme === 'Dark' ? colors.White : colors.Black,
       fontSize: 15
     },
-    input: {
-      margin: 15,
-      borderRadius: 3,
-      padding: 15,
-      width: '90%',
-      elevation: 5,
-      backgroundColor: colors.Input_Background,
-      color: colors.Grey_Text
-    },
-    error: {
-      color: colors.Danger,
-      fontSize: 20,
-      marginTop: 15
-    }
   })

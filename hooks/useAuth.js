@@ -8,6 +8,7 @@ import {
 } from '@react-native-google-signin/google-signin'
 
 import { removeData } from './useDb'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export function useAuth() {
   const [user, setUser] = useState()

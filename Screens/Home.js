@@ -1,146 +1,77 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   StyleSheet,
-  Text,
-  View,
-  FlatList,
-  SafeAreaView,
-  StatusBar
+  StatusBar,
 } from 'react-native'
 
-import { getDoneTasks } from '../utils/getDoneTasks'
-
-import RemoveGroupModal from '../components/RemoveGroupModal'
-
 import AppContext from '../contexts/AppContext'
+import SideBarContext from '../contexts/SideBarContext'
 
-import Task from '../components/Task'
-import Group from '../components/Group'
-import RemoveTaskModal from '../components/RemoveTaskModal'
+import AddNewButton from '../components/AddNew/AddNewButton'
+import AppHeader from '../components/AppHeader'
+import SideBar from '../components/SideBar'
+import HomeContent from '../components/HomeContent'
+
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
 
 export default function Home() {
-  const [stopScroll, setStopScroll] = useState(false)
-  const [removeModalVisible, setRemoveModalVisible] = useState(false)
-  const [chosenGroup, setChosenGroup] = useState()
-  const [removeTaskModalVisible, setRemoveTaskModalVisible] = useState(false)
-  const [chosenTask, setChosenTask] = useState()
-  const [removeTaskFrom, setRemoveTaskFrom] = useState()
+  const { colors, theme } = useContext(AppContext)
+  const { sideBarOpen } = useContext(SideBarContext)
 
-  const {
-    data,
-    toggleDone,
-    toggleCollapsed,
-    updateTaskData,
-    TEXT,
-    colors,
-    theme,
-    sortTasks
-  } = useContext(AppContext)
+  const scale = useSharedValue(1)
+  const translateX = useSharedValue(0)
+  const borderRadius = useSharedValue(0)
 
-  function renderTasks(item, drag, group) {
-    return (
-      <Task
-        TEXT={TEXT}
-        colors={colors}
-        drag={drag}
-        group={group}
-        item={item}
-        toggleDone={toggleDone}
-        setRemoveTaskModalVisible={setRemoveTaskModalVisible}
-        setChosenTask={setChosenTask}
-        setRemoveTaskFrom={setRemoveTaskFrom}
-      />
-    )
-  }
+  const animStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { scale: scale.value },
+        { translateX: translateX.value }
+      ],
+      borderRadius: borderRadius.value
+    }
+  })
 
-  function renderGroups({ item }) {
-    const dragItem = item
-    const doneTasks = getDoneTasks(item.id, data)
-    const allTasks = item.tasks ? item.tasks.length : 0
-    return (
-      <Group
-        TEXT={TEXT}
-        colors={colors}
-        dragItem={dragItem}
-        doneTasks={doneTasks}
-        allTasks={allTasks}
-        item={item}
-        toggleCollapsed={toggleCollapsed}
-        updateTaskData={updateTaskData}
-        renderTasks={renderTasks}
-        setChosenGroup={setChosenGroup}
-        setRemoveModalVisible={setRemoveModalVisible}
-        setStopScroll={setStopScroll}
-        sortTasks={sortTasks}
-      />
-    )
-  }
+  useEffect(() => {
+    if (sideBarOpen) {
+      scale.value = withTiming(0.9, { duration: 500 })
+      translateX.value = withTiming(200, { duration: 500 })
+      borderRadius.value = withTiming(10, { duration: 500 })
+    } else {
+      scale.value = withTiming(1, { duration: 500 })
+      translateX.value = withTiming(0, { duration: 500 })
+      borderRadius.value = withTiming(0, { duration: 500 })
+    }
+  }, [sideBarOpen])
 
   return (
-    <SafeAreaView style={styles(colors).background}>
+    <>
       <StatusBar
-        backgroundColor={colors.Background}
-        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+        backgroundColor={sideBarOpen ? colors.Primary : theme === 'Dark' ? colors.DarkGrey : colors.White}
+        barStyle={theme === 'Dark' || sideBarOpen ? 'light-content' : 'dark-content'}
+        animated={true}
       />
-      <Text style={styles(colors).header}>{TEXT.Home.Header}</Text>
-      {data?.groups?.length > 0 ? (
-        <FlatList
-          data={data.groups}
-          renderItem={renderGroups}
-          scrollEnabled={!stopScroll}
-          showsVerticalScrollIndicator={false}
-        />
-      ) : (
-        <View style={styles(colors).no_data}>
-          <Text style={styles(colors).no_data_text}>
-            {TEXT.Home.No_Data_Text_L}
-          </Text>
-          <Text style={[styles(colors).no_data_text, { fontSize: 20 }]}>
-            {TEXT.Home.No_Data_Text_Sm}
-          </Text>
-        </View>
-      )}
-      <RemoveGroupModal
-        visible={removeModalVisible}
-        group={chosenGroup}
-        setVisible={setRemoveModalVisible}
-        setGroupChosen={setChosenGroup}
-      />
-      <RemoveTaskModal
-        visible={removeTaskModalVisible}
-        setVisible={setRemoveTaskModalVisible}
-        setTaskChosen={setChosenTask}
-        task={chosenTask}
-        from={removeTaskFrom}
-      />
-    </SafeAreaView>
+      <SideBar />
+      <Animated.View style={[styles(colors, theme).background, animStyle]}>
+        <AppHeader />
+        <HomeContent />
+        <AddNewButton />
+      </Animated.View>
+    </>
   )
 }
 
-const styles = colors =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     background: {
-      backgroundColor: colors.Background,
-      height: '100%'
-    },
-    header: {
-      textAlign: 'center',
-      fontSize: 25,
-      padding: 10,
-      letterSpacing: 5,
-      color: colors.Grey_Text,
-      fontWeight: 'bold',
-      textTransform: 'uppercase'
-    },
-    no_data: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '90%'
-    },
-    no_data_text: {
-      fontSize: 30,
-      color: colors.Grey_Text,
-      fontStyle: 'italic'
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
+      flexGrow: 1,
+      position: 'absolute',
+      top: 0, 
+      left: 0,
+      right: 0,
+      bottom: 0,
+      elevation: 10,
+      overflow: 'hidden'
     }
   })

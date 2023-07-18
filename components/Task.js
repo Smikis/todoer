@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 
 import { ScaleDecorator } from 'react-native-draggable-flatlist'
 
@@ -9,89 +9,115 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import PropTypes from 'prop-types'
 
 import { getDueText } from '../utils/getDueText'
+import AppContext from '../contexts/AppContext'
+
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated'
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 const MILISECONDS_IN_A_DAY = 86400000
 
 Task.propTypes = {
-  dueIn: PropTypes.number,
-  colors: PropTypes.object,
   item: PropTypes.object,
-  TEXT: PropTypes.object,
   drag: PropTypes.func,
   group: PropTypes.object,
-  toggleDone: PropTypes.func,
+  index: PropTypes.number,
   setRemoveTaskModalVisible: PropTypes.func,
   setChosenTask: PropTypes.func,
-  setRemoveTaskFrom: PropTypes.func
 }
 
 export default function Task({
-  colors,
   item,
-  TEXT,
   drag,
+  index,
   group,
-  toggleDone,
   setRemoveTaskModalVisible,
   setChosenTask,
-  setRemoveTaskFrom
 }) {
   const dueIn =
     Math.ceil((item.due - Date.now()) / MILISECONDS_IN_A_DAY) ?? null
+
+  const {
+    toggleDone,
+    TEXT,
+    colors,
+    theme
+  } = useContext(AppContext)
+  
+  const opacity = useSharedValue(0)
+  const translateX = useSharedValue(-100)
+
+  const animStyle = useAnimatedStyle(() => {
+    return {
+      opacity: opacity.value,
+      transform: [
+        {
+          translateX: translateX.value
+        }
+      ]
+    }
+  })
+
+  useEffect(() => {
+    opacity.value = withTiming(1, { duration: 500, delay: index * 100 })
+    translateX.value = withTiming(0, { duration: 500, delay: index * 100 })
+  }, [])
+
   return (
     <ScaleDecorator>
-      <Pressable
+      <AnimatedPressable
         onLongPress={drag}
+        style={animStyle}
         onPress={() => {
           if (item.repeating || (item.due - Date.now() <= 0 && item.due)) return
           toggleDone(group.id, item.id)
-        }}>
+        }}
+      >
         <View
           style={[
-            styles(colors).task,
+            styles(colors, theme).task,
             {
               backgroundColor:
                 dueIn <= 1 && item.due && !item.isDone && !item.repeating
-                  ? colors.Danger
+                  ? colors.Red
                   : colors.Primary,
               borderLeftColor:
                 item.isDone && !item.repeating
-                  ? colors.Check_Done
-                  : colors.Check
+                  ? colors.Green
+                  : colors.White
             }
           ]}>
           <View style={{ flexShrink: 1 }}>
-            <Text style={styles(colors).task_text}>{item.value}</Text>
-            <View
+            <Text style={styles(colors, theme).task_text}>{item.value}</Text>
+            {((item.due || item.repeating) && !item.isDone) && <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
                 paddingVertical: 10
               }}>
-              {item.due ? (
-                <Icon
-                  name={'clock-o'}
-                  size={15}
-                  color={colors.Grey_Text}
-                  style={{ marginRight: 5 }}
-                />
-              ) : null}
+              <Icon
+                name={'clock-o'}
+                size={15}
+                color={colors.White}
+                style={{ marginRight: 5, marginLeft: 5 }}
+              />
               {item.due && !item.isDone && !item.repeating ? (
-                <Text style={styles(colors).due_text}>
+                <Text style={styles(colors, theme).due_text}>
                   {getDueText(item.due, TEXT)}
                 </Text>
               ) : item.repeating ? (
-                <Text style={styles(colors).due_text}>
+                <Text style={styles(colors, theme).due_text}>
                   {TEXT.Home.Repeating}
                 </Text>
               ) : null}
             </View>
+            }
           </View>
           <View
             style={{
               flexDirection: 'row',
               alignItems: 'center',
-              borderLeftColor: colors.Grey_Text,
+              borderLeftColor: colors.White,
               borderLeftWidth: 1,
               height: '100%',
               paddingLeft: 20
@@ -100,29 +126,28 @@ export default function Task({
               <Icon
                 name={'check'}
                 size={20}
-                color={item.isDone ? colors.Check_Done : colors.Check}
+                color={item.isDone ? colors.Green : colors.White}
                 style={{ marginRight: 20 }}
               />
             ) : null}
             <Icon
               name={'trash-o'}
-              color={colors.Grey_Text}
+              color={colors.White}
               size={20}
               style={{ marginRight: 10 }}
               onPress={() => {
                 setRemoveTaskModalVisible(true)
                 setChosenTask(item)
-                setRemoveTaskFrom(group.id)
               }}
             />
           </View>
         </View>
-      </Pressable>
+      </AnimatedPressable>
     </ScaleDecorator>
   )
 }
 
-const styles = colors =>
+const styles = (colors) =>
   StyleSheet.create({
     task: {
       padding: 15,
@@ -141,13 +166,13 @@ const styles = colors =>
       borderLeftWidth: 7
     },
     task_text: {
-      color: colors.Task_Text,
+      color: colors.White,
       fontSize: 17,
       paddingHorizontal: 5
     },
     due_text: {
-      color: colors.Task_Text,
-      fontWeight: 'bold',
+      color: colors.White,
+      fontWeight: '500',
       fontSize: 10
     }
   })

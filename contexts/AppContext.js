@@ -4,7 +4,6 @@ import { useAuth } from '../hooks/useAuth'
 import { useDb } from '../hooks/useDb'
 import { useLanguage } from '../hooks/useLanguage'
 
-import { getColorsByTheme } from '../services/getColorByTheme'
 import { getTextBasedOnLocale } from '../services/getTextBasedOnLanguage'
 import { onCreateTriggerNotification } from '../services/TriggerNotifications'
 import { cancelNotifications } from '../services/TriggerNotifications'
@@ -19,6 +18,8 @@ import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 
 import Toast from 'react-native-toast-message'
 
+import { COLORS as colors } from '../constants/COLORS'
+
 const AppContext = createContext()
 
 export function AppProvider({ children }) {
@@ -29,21 +30,11 @@ export function AppProvider({ children }) {
   const { locale } = useLanguage()
   const { user } = useAuth(() => setData)
   const TEXT = getTextBasedOnLocale(locale)
-  const colors = getColorsByTheme(theme)
   const { getItem, setItem } = useAsyncStorage('@user_theme')
-
-  const ordering = {
-    0: 'byDateDESC',
-    1: 'byDateASC',
-    2: 'byNameDESC',
-    3: 'byNameASC',
-    4: 'byDoneDESC',
-    5: 'byDoneASC'
-  }
 
   useEffect(() => {
     if (user) {
-      ;(async () => {
+      (async () => {
         try {
           setLoading(true)
           const initData = await readData()
@@ -59,7 +50,7 @@ export function AppProvider({ children }) {
   }, [user])
 
   useEffect(() => {
-    ;(async () => await updateDb(data))()
+    (async () => await updateDb(data))()
   }, [data])
 
   function appendGroup(inputText) {
@@ -130,7 +121,7 @@ export function AppProvider({ children }) {
         type: 'errorToast',
         text1: TEXT.Toast.Error,
         text2: TEXT.Toast.Error_Text,
-        props: { colors: colors }
+        props: { colors: colors, theme: theme }
       })
     }
 
@@ -299,6 +290,11 @@ export function AppProvider({ children }) {
       value={{
         user,
         data,
+        loading,
+        locale,
+        TEXT,
+        colors,
+        theme,
         appendGroup,
         toggleDone,
         toggleCollapsed,
@@ -307,11 +303,6 @@ export function AppProvider({ children }) {
         removeGroup,
         removeTask,
         switchTheme,
-        loading,
-        locale,
-        TEXT,
-        colors,
-        theme,
         sortTasks
       }}>
       {children}

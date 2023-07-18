@@ -8,7 +8,7 @@ export const toastConfig = {
         paddingHorizontal: 15,
         height: 60,
         width: '80%',
-        backgroundColor: props.colors.Background,
+        backgroundColor: props.theme === 'Dark' ? props.colors.DarkGrey : props.colors.White,
         borderLeftColor: props.colors.Primary,
         borderLeftWidth: 5,
         elevation: 10,
@@ -18,13 +18,13 @@ export const toastConfig = {
         style={{
           fontSize: 17,
           paddingVertical: 5,
-          fontWeight: '400',
-          color: props.colors.Text
+          fontWeight: '500',
+          color: props.theme === 'Dark' ? props.colors.White : props.colors.Black
         }}>
         {text1}
       </Text>
       <Text
-        style={{ color: props.colors.Text, fontSize: 14, fontWeight: '500' }}>
+        style={{ color: props.theme === 'Dark' ? props.colors.White : props.colors.Black, fontSize: 14, fontWeight: '400' }}>
         {text2}
       </Text>
     </View>
@@ -35,8 +35,8 @@ export const toastConfig = {
         paddingHorizontal: 15,
         height: 60,
         width: '80%',
-        backgroundColor: props.colors.Background,
-        borderLeftColor: props.colors.Danger,
+        backgroundColor: props.theme === 'Dark' ? props.colors.DarkGrey : props.colors.White,
+        borderLeftColor: props.colors.Red,
         borderLeftWidth: 5,
         elevation: 10,
         borderRadius: 3
@@ -45,13 +45,13 @@ export const toastConfig = {
         style={{
           fontSize: 17,
           paddingVertical: 5,
-          fontWeight: '400',
-          color: props.colors.Text
+          fontWeight: '500',
+          color: props.theme === 'Dark' ? props.colors.White : props.colors.Black
         }}>
         {text1}
       </Text>
       <Text
-        style={{ color: props.colors.Text, fontSize: 14, fontWeight: '500' }}>
+        style={{ color: props.theme === 'Dark' ? props.colors.White : props.colors.Black, fontSize: 14, fontWeight: '400' }}>
         {text2}
       </Text>
     </View>

@@ -12,22 +12,21 @@ import PropTypes from 'prop-types'
 import Toast from 'react-native-toast-message'
 
 import AppContext from '../contexts/AppContext'
+import ModalView from './ModalView'
 
 export default function RemoveGroupModal({
   visible,
   setVisible,
   group,
-  setGroupChosen
 }) {
   const [inputText, setInputText] = useState('')
   const [error, setError] = useState(null)
-  const { TEXT, colors, removeGroup } = useContext(AppContext)
+  const { TEXT, colors, removeGroup, theme } = useContext(AppContext)
 
   function handleExit() {
     setError(null)
     setInputText('')
     setVisible(false)
-    setGroupChosen(null)
   }
 
   function handleConfirm() {
@@ -48,7 +47,7 @@ export default function RemoveGroupModal({
           type: 'successToast',
           text1: TEXT.Toast.Success,
           text2: `${TEXT.Toast.Remove_Success_Text}`,
-          props: { colors: colors }
+          props: { colors: colors, theme: theme }
         })
         break
       case 'error':
@@ -56,7 +55,7 @@ export default function RemoveGroupModal({
           type: 'errorToast',
           text1: TEXT.Toast.Error,
           text2: TEXT.Toast.Error_Text,
-          props: { colors: colors }
+          props: { colors: colors, theme: theme }
         })
         break
     }
@@ -65,24 +64,23 @@ export default function RemoveGroupModal({
   }
 
   return (
-    <Modal
-      animationType="fade"
-      transparent={true}
-      visible={visible || false}
-      onRequestClose={handleExit}>
-      <View style={styles(colors).centeredView}>
-        <View style={styles(colors).modalView}>
-          <Text style={styles(colors).remove_text}>
+    <ModalView
+      visible={visible}
+      handleExit={handleExit}
+    >
+      <View style={styles(colors, theme).centeredView}>
+        <View style={styles(colors, theme).modalView}>
+          <Text style={styles(colors, theme).remove_text}>
             {TEXT.Remove_Group_Modal.Remove_Text}
           </Text>
-          <Text style={styles(colors).group_text}>
+          <Text style={styles(colors, theme).group_text}>
             {group ? group.group.toUpperCase() : null}
           </Text>
-          {error && <Text style={styles(colors).error}>{error}</Text>}
+          {error && <Text style={styles(colors, theme).error}>{error}</Text>}
           <TextInput
             style={[
-              styles(colors).input,
-              { shadowColor: error ? colors.Danger : 'black' }
+              styles(colors, theme).input,
+              { shadowColor: error ? colors.Red : colors.Black }
             ]}
             value={inputText}
             onChangeText={text => setInputText(text)}
@@ -92,19 +90,19 @@ export default function RemoveGroupModal({
             onPressOut={() => setError(null)}
             placeholderTextColor={'grey'}
           />
-          <View style={styles(colors).buttons}>
+          <View style={styles(colors, theme).buttons}>
             <Pressable
               onPress={handleConfirm}
-              style={styles(colors).confirm_btn}>
-              <Text style={styles(colors).confirm_text}>{TEXT.Remove}</Text>
+              style={styles(colors, theme).confirm_btn}>
+              <Text style={styles(colors, theme).confirm_text}>{TEXT.Remove}</Text>
             </Pressable>
-            <Pressable onPress={handleExit} style={styles(colors).cancel_btn}>
-              <Text style={styles(colors).cancel_text}>{TEXT.Cancel}</Text>
+            <Pressable onPress={handleExit} style={styles(colors, theme).cancel_btn}>
+              <Text style={styles(colors, theme).cancel_text}>{TEXT.Cancel}</Text>
             </Pressable>
           </View>
         </View>
       </View>
-    </Modal>
+    </ModalView>
   )
 }
 
@@ -115,26 +113,25 @@ RemoveGroupModal.propTypes = {
   setGroupChosen: PropTypes.func
 }
 
-const styles = colors =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     centeredView: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)',
       padding: 20
     },
     modalView: {
       borderRadius: 10,
       alignItems: 'center',
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5,
       padding: 20,
       width: '100%'
     },
     remove_text: {
       fontSize: 20,
-      color: colors.Text,
+      color: theme === 'Dark' ? colors.White : colors.Black,
       padding: 10
     },
     group_text: {
@@ -152,23 +149,23 @@ const styles = colors =>
     confirm_btn: {
       padding: 15,
       borderRadius: 3,
-      borderColor: colors.Danger,
+      borderColor: colors.Red,
       borderWidth: 2,
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5
     },
     confirm_text: {
-      color: colors.Danger,
+      color: colors.Red,
       fontSize: 15
     },
     cancel_btn: {
       padding: 15,
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       elevation: 5,
       borderRadius: 3
     },
     cancel_text: {
-      color: colors.Text,
+      color: theme === 'Dark' ? colors.White : colors.Black,
       fontSize: 15
     },
     input: {
@@ -177,11 +174,11 @@ const styles = colors =>
       padding: 15,
       width: '90%',
       elevation: 5,
-      backgroundColor: colors.Input_Background,
-      color: colors.Grey_Text
+      backgroundColor: theme === 'Dark' ? colors.LightDarkGrey : colors.White,
+      color: theme === 'Dark' ? colors.White : colors.Black
     },
     error: {
-      color: colors.Danger,
+      color: colors.Red,
       fontSize: 20,
       marginTop: 15
     }

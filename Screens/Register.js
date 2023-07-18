@@ -105,87 +105,87 @@ export default function Register() {
   }
 
   return (
-    <SafeAreaView style={styles(colors).container}>
+    <SafeAreaView style={styles(colors, theme).container}>
       <StatusBar
-        backgroundColor={colors.Background}
+        backgroundColor={theme === 'Dark' ? colors.DarkGrey : colors.White}
         barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
       />
-      <Text style={styles(colors).header}>{TEXT.Register.Header}</Text>
+      <Text style={styles(colors, theme).header}>{TEXT.Register.Header}</Text>
       {inputs.emailError && (
-        <Text style={styles(colors).error}>{inputs.emailError}</Text>
+        <Text style={styles(colors, theme).error}>{inputs.emailError}</Text>
       )}
       <TextInput
         value={inputs.email}
         style={[
-          styles(colors).input,
-          { shadowColor: inputs.emailError ? colors.Danger : 'black' }
+          styles(colors, theme).input,
+          { shadowColor: inputs.emailError ? colors.Red : colors.Black }
         ]}
         onChangeText={text => setInputs(prev => ({ ...prev, email: text }))}
         placeholder={TEXT.Placeholders.Email}
         keyboardType="email-address"
-        placeholderTextColor={'grey'}
+        placeholderTextColor={colors.Grey}
         editable={!loading}
         onPressOut={clearErrors}
       />
       {inputs.passwordError && (
-        <Text style={styles(colors).error}>{inputs.passwordError}</Text>
+        <Text style={styles(colors, theme).error}>{inputs.passwordError}</Text>
       )}
       <TextInput
         value={inputs.password}
         style={[
-          styles(colors).input,
-          { shadowColor: inputs.passwordError ? colors.Danger : 'black' }
+          styles(colors, theme).input,
+          { shadowColor: inputs.passwordError ? colors.Red : colors.Black }
         ]}
         onChangeText={text => setInputs(prev => ({ ...prev, password: text }))}
         placeholder={TEXT.Placeholders.Password}
         secureTextEntry={true}
-        placeholderTextColor={'grey'}
+        placeholderTextColor={colors.Grey}
         editable={!loading}
         onPressOut={clearErrors}
       />
       {inputs.confirmPasswordError && (
-        <Text style={styles(colors).error}>{inputs.confirmPasswordError}</Text>
+        <Text style={styles(colors, theme).error}>{inputs.confirmPasswordError}</Text>
       )}
       <TextInput
         value={inputs.confirmPassword}
         style={[
-          styles(colors).input,
-          { shadowColor: inputs.confirmPasswordError ? colors.Danger : 'black' }
+          styles(colors, theme).input,
+          { shadowColor: inputs.confirmPasswordError ? colors.Red : colors.Black }
         ]}
         onChangeText={text =>
           setInputs(prev => ({ ...prev, confirmPassword: text }))
         }
         placeholder={TEXT.Placeholders.Confirm_Password}
         secureTextEntry={true}
-        placeholderTextColor={'grey'}
+        placeholderTextColor={colors.Grey}
         editable={!loading}
         onPressOut={clearErrors}
       />
-      <Pressable style={styles(colors).login_btn} onPress={validateInput}>
+      <Pressable style={styles(colors, theme).login_btn} onPress={validateInput}>
         {loading ? (
           <>
             <ActivityIndicator
               style={{ marginRight: 15 }}
               animating={loading}
               size={'small'}
-              color={'white'}
+              color={colors.White}
             />
-            <Text style={styles(colors).login_btn_text}>{TEXT.Loading}</Text>
+            <Text style={styles(colors, theme).login_btn_text}>{TEXT.Loading}</Text>
           </>
         ) : (
-          <Text style={styles(colors).login_btn_text}>
+          <Text style={styles(colors, theme).login_btn_text}>
             {TEXT.Register.Sign_Up}
           </Text>
         )}
       </Pressable>
-      <View style={styles(colors).separator_line}>
-        <Text style={styles(colors).separator_text}>{TEXT.Separator}</Text>
+      <View style={styles(colors, theme).separator_line}>
+        <Text style={styles(colors, theme).separator_text}>{TEXT.Separator}</Text>
       </View>
       <GoogleSigninButton style={{ height: 60 }} onPress={loginWithGoogle} />
       <View style={{ padding: 15 }}>
         <Link
           onPress={cleanup}
-          style={{ fontSize: 20, color: colors.Grey_Text }}
+          style={{ fontSize: 20, color: colors.Grey }}
           to={{ screen: 'Login' }}>
           {TEXT.Login.Sign_In}
         </Link>
@@ -194,19 +194,19 @@ export default function Register() {
   )
 }
 
-const styles = colors =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     header: {
       fontSize: 40,
       margin: 15,
-      color: colors.Grey_Text
+      color: colors.Grey
     },
     container: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       flex: 1,
-      backgroundColor: colors.Background
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White
     },
     input: {
       padding: 15,
@@ -214,8 +214,8 @@ const styles = colors =>
       margin: 15,
       borderRadius: 3,
       fontSize: 20,
-      color: colors.Grey_Text,
-      backgroundColor: colors.Input_Background,
+      color: colors.Black,
+      backgroundColor: theme === 'Dark' ? colors.LightDarkGrey : colors.White,
       elevation: 5
     },
     login_btn: {
@@ -232,12 +232,12 @@ const styles = colors =>
       marginTop: 15
     },
     login_btn_text: {
-      color: colors.Text_Btn_Blue,
+      color: colors.White,
       fontSize: 20
     },
     separator_line: {
       borderBottomWidth: 1,
-      borderBottomColor: colors.Text,
+      borderBottomColor: colors.Grey,
       width: '90%',
       padding: 10,
       position: 'relative',
@@ -248,12 +248,12 @@ const styles = colors =>
     separator_text: {
       position: 'absolute',
       padding: 10,
-      backgroundColor: colors.Background,
+      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       display: 'flex',
-      color: colors.Text
+      color: colors.Grey
     },
     error: {
-      color: colors.Danger,
+      color: colors.Red,
       fontSize: 20,
       marginTop: 15
     }

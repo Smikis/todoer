@@ -1,5 +1,5 @@
-import { light, dark } from '../constants/COLORS'
+import { COLORS } from '../constants/COLORS'
 
-export function getColorsByTheme(theme) {
-  return theme === 'Light' ? light : dark
+export function getColorsByTheme() {
+  return COLORS
 }

@@ -6,6 +6,7 @@ import React from 'react'
 import notifee, { EventType } from '@notifee/react-native'
 
 import { AppProvider } from './contexts/AppContext'
+import { SideBarProvider } from './contexts/SideBarContext'
 
 import { GoogleSignin } from '@react-native-google-signin/google-signin'
 import { WEBCLIENTID } from './constants/CONSTANTS'
@@ -36,7 +37,9 @@ notifee.isChannelCreated('notification-channel').then(created => {
 const ProvidedApp = () => {
   return (
     <AppProvider>
-      <App />
+      <SideBarProvider>
+        <App />
+      </SideBarProvider>
     </AppProvider>
   )
 }
