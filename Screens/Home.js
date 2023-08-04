@@ -1,8 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import {
-  StyleSheet,
-  StatusBar,
-} from 'react-native'
+import { StyleSheet, Pressable, BackHandler } from 'react-native'
 
 import AppContext from '../contexts/AppContext'
 import SideBarContext from '../contexts/SideBarContext'
@@ -12,11 +9,18 @@ import AppHeader from '../components/AppHeader'
 import SideBar from '../components/SideBar'
 import HomeContent from '../components/HomeContent'
 
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
+import { useFocusEffect } from '@react-navigation/native'
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
 export default function Home() {
   const { colors, theme } = useContext(AppContext)
-  const { sideBarOpen } = useContext(SideBarContext)
+  const { sideBarOpen, setSideBarOpen } = useContext(SideBarContext)
 
   const scale = useSharedValue(1)
   const translateX = useSharedValue(0)
@@ -24,10 +28,7 @@ export default function Home() {
 
   const animStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        { scale: scale.value },
-        { translateX: translateX.value }
-      ],
+      transform: [{ scale: scale.value }, { translateX: translateX.value }],
       borderRadius: borderRadius.value
     }
   })
@@ -44,19 +45,32 @@ export default function Home() {
     }
   }, [sideBarOpen])
 
+  useFocusEffect(() => {
+    const onBackPress = () => {
+      if (sideBarOpen) {
+        setSideBarOpen(false)
+        return true
+      } else {
+        return false
+      }
+    }
+
+    BackHandler.addEventListener('hardwareBackPress', onBackPress)
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', onBackPress)
+  })
+
   return (
     <>
-      <StatusBar
-        backgroundColor={sideBarOpen ? colors.Primary : theme === 'Dark' ? colors.DarkGrey : colors.White}
-        barStyle={theme === 'Dark' || sideBarOpen ? 'light-content' : 'dark-content'}
-        animated={true}
-      />
       <SideBar />
-      <Animated.View style={[styles(colors, theme).background, animStyle]}>
+      <AnimatedPressable
+        onPress={() => setSideBarOpen(false)}
+        style={[styles(colors, theme).background, animStyle]}>
         <AppHeader />
         <HomeContent />
         <AddNewButton />
-      </Animated.View>
+      </AnimatedPressable>
     </>
   )
 }
@@ -67,7 +81,7 @@ const styles = (colors, theme) =>
       backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
       flexGrow: 1,
       position: 'absolute',
-      top: 0, 
+      top: 0,
       left: 0,
       right: 0,
       bottom: 0,

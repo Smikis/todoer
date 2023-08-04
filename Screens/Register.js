@@ -8,7 +8,8 @@ import {
   Pressable,
   ActivityIndicator,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Image
 } from 'react-native'
 
 import { Link } from '@react-navigation/native'
@@ -19,7 +20,7 @@ import { GoogleSigninButton } from '@react-native-google-signin/google-signin'
 import AppContext from '../contexts/AppContext'
 
 export default function Register() {
-  const { TEXT, colors, theme } = useContext(AppContext)
+  const { TEXT, colors } = useContext(AppContext)
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -104,88 +105,124 @@ export default function Register() {
     setLoading(false)
   }
 
+  async function handleGoogleLogin() {
+    setLoading(true)
+    const resp = await loginWithGoogle()
+
+    switch (resp) {
+      case 'auth/account-exists-with-different-credential':
+        setInputs(prev => ({
+          ...prev,
+          emailError: TEXT.Validation.Email_Exists
+        }))
+        break
+      case 'auth/invalid-credential':
+        setInputs(prev => ({
+          ...prev,
+          emailError: TEXT.Validation.Credential_Expired
+        }))
+        break
+      case 'auth/user-disabled':
+        setInputs(prev => ({
+          ...prev,
+          emailError: TEXT.Validation.User_Disabled
+        }))
+        break
+      case 'auth/user-not-found':
+        setInputs(prev => ({
+          ...prev,
+          emailError: TEXT.Validation.User_Doesnt_Exist
+        }))
+        break
+      case 'auth/wrong-password':
+        setInputs(prev => ({
+          ...prev,
+          passwordError: TEXT.Validation.Wrong_Password
+        }))
+        break
+    }
+
+    setLoading(false)
+    cleanup()
+  }
+
   return (
-    <SafeAreaView style={styles(colors, theme).container}>
-      <StatusBar
-        backgroundColor={theme === 'Dark' ? colors.DarkGrey : colors.White}
-        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+    <SafeAreaView style={styles(colors).container}>
+      <StatusBar backgroundColor={colors.Primary} barStyle={'light-content'} />
+      <Image
+        source={require('../icons/play_store_512.png')}
+        style={{
+          width: 200,
+          height: 200,
+          resizeMode: 'contain'
+        }}
       />
-      <Text style={styles(colors, theme).header}>{TEXT.Register.Header}</Text>
+      <GoogleSigninButton onPress={handleGoogleLogin} />
+      <View style={styles(colors).separator_line}>
+        <Text style={styles(colors).separator_text}>{TEXT.Separator}</Text>
+      </View>
       {inputs.emailError && (
-        <Text style={styles(colors, theme).error}>{inputs.emailError}</Text>
+        <Text style={styles(colors).error}>{inputs.emailError}</Text>
       )}
       <TextInput
         value={inputs.email}
-        style={[
-          styles(colors, theme).input,
-          { shadowColor: inputs.emailError ? colors.Red : colors.Black }
-        ]}
+        style={styles(colors).input}
         onChangeText={text => setInputs(prev => ({ ...prev, email: text }))}
         placeholder={TEXT.Placeholders.Email}
         keyboardType="email-address"
-        placeholderTextColor={colors.Grey}
+        placeholderTextColor={colors.LightBlue}
         editable={!loading}
         onPressOut={clearErrors}
       />
       {inputs.passwordError && (
-        <Text style={styles(colors, theme).error}>{inputs.passwordError}</Text>
+        <Text style={styles(colors).error}>{inputs.passwordError}</Text>
       )}
       <TextInput
         value={inputs.password}
-        style={[
-          styles(colors, theme).input,
-          { shadowColor: inputs.passwordError ? colors.Red : colors.Black }
-        ]}
+        style={styles(colors).input}
         onChangeText={text => setInputs(prev => ({ ...prev, password: text }))}
         placeholder={TEXT.Placeholders.Password}
         secureTextEntry={true}
-        placeholderTextColor={colors.Grey}
+        placeholderTextColor={colors.LightBlue}
         editable={!loading}
         onPressOut={clearErrors}
       />
       {inputs.confirmPasswordError && (
-        <Text style={styles(colors, theme).error}>{inputs.confirmPasswordError}</Text>
+        <Text style={styles(colors).error}>{inputs.confirmPasswordError}</Text>
       )}
       <TextInput
         value={inputs.confirmPassword}
-        style={[
-          styles(colors, theme).input,
-          { shadowColor: inputs.confirmPasswordError ? colors.Red : colors.Black }
-        ]}
+        style={styles(colors).input}
         onChangeText={text =>
           setInputs(prev => ({ ...prev, confirmPassword: text }))
         }
         placeholder={TEXT.Placeholders.Confirm_Password}
         secureTextEntry={true}
-        placeholderTextColor={colors.Grey}
+        placeholderTextColor={colors.LightBlue}
         editable={!loading}
         onPressOut={clearErrors}
       />
-      <Pressable style={styles(colors, theme).login_btn} onPress={validateInput}>
+      <Pressable style={styles(colors).login_btn} onPress={validateInput}>
         {loading ? (
           <>
             <ActivityIndicator
               style={{ marginRight: 15 }}
               animating={loading}
               size={'small'}
-              color={colors.White}
+              color={colors.Black}
             />
-            <Text style={styles(colors, theme).login_btn_text}>{TEXT.Loading}</Text>
+            <Text style={styles(colors).login_btn_text}>{TEXT.Loading}</Text>
           </>
         ) : (
-          <Text style={styles(colors, theme).login_btn_text}>
+          <Text style={styles(colors).login_btn_text}>
             {TEXT.Register.Sign_Up}
           </Text>
         )}
       </Pressable>
-      <View style={styles(colors, theme).separator_line}>
-        <Text style={styles(colors, theme).separator_text}>{TEXT.Separator}</Text>
-      </View>
-      <GoogleSigninButton style={{ height: 60 }} onPress={loginWithGoogle} />
       <View style={{ padding: 15 }}>
         <Link
           onPress={cleanup}
-          style={{ fontSize: 20, color: colors.Grey }}
+          style={{ fontSize: 20, color: colors.White }}
           to={{ screen: 'Login' }}>
           {TEXT.Login.Sign_In}
         </Link>
@@ -194,51 +231,45 @@ export default function Register() {
   )
 }
 
-const styles = (colors, theme) =>
+const styles = colors =>
   StyleSheet.create({
-    header: {
-      fontSize: 40,
-      margin: 15,
-      color: colors.Grey
-    },
     container: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       flex: 1,
-      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White
+      backgroundColor: colors.Primary,
+      padding: 15
     },
     input: {
       padding: 15,
-      width: '90%',
+      width: '100%',
       margin: 15,
-      borderRadius: 3,
       fontSize: 20,
-      color: colors.Black,
-      backgroundColor: theme === 'Dark' ? colors.LightDarkGrey : colors.White,
-      elevation: 5
+      color: colors.White,
+      borderBottomColor: colors.White,
+      borderBottomWidth: 2
     },
     login_btn: {
-      width: '90%',
+      width: '100%',
       alignItems: 'center',
-      backgroundColor: colors.Primary,
-      padding: 15,
-      borderRadius: 3,
-      display: 'flex',
-      flexDirection: 'row',
-      alignContent: 'center',
+      backgroundColor: colors.White,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 100,
       justifyContent: 'center',
-      elevation: 5,
+      alignItems: 'center',
+      flexDirection: 'row',
       marginTop: 15
     },
     login_btn_text: {
-      color: colors.White,
+      color: colors.Black,
       fontSize: 20
     },
     separator_line: {
       borderBottomWidth: 1,
-      borderBottomColor: colors.Grey,
-      width: '90%',
+      borderBottomColor: colors.White,
+      width: '100%',
       padding: 10,
       position: 'relative',
       alignItems: 'center',
@@ -248,9 +279,9 @@ const styles = (colors, theme) =>
     separator_text: {
       position: 'absolute',
       padding: 10,
-      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
+      backgroundColor: colors.Primary,
       display: 'flex',
-      color: colors.Grey
+      color: colors.White
     },
     error: {
       color: colors.Red,

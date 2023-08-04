@@ -273,6 +273,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation project(':react-native-community-checkbox')
 
+    implementation project(':react-native-splash-screen')
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     //noinspection GradleDynamicVersion

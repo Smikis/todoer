@@ -14,11 +14,7 @@ import Toast from 'react-native-toast-message'
 import AppContext from '../contexts/AppContext'
 import ModalView from './ModalView'
 
-export default function RemoveGroupModal({
-  visible,
-  setVisible,
-  group,
-}) {
+export default function RemoveGroupModal({ visible, setVisible, group }) {
   const [inputText, setInputText] = useState('')
   const [error, setError] = useState(null)
   const { TEXT, colors, removeGroup, theme } = useContext(AppContext)
@@ -64,10 +60,7 @@ export default function RemoveGroupModal({
   }
 
   return (
-    <ModalView
-      visible={visible}
-      handleExit={handleExit}
-    >
+    <ModalView visible={visible} handleExit={handleExit}>
       <View style={styles(colors, theme).centeredView}>
         <View style={styles(colors, theme).modalView}>
           <Text style={styles(colors, theme).remove_text}>
@@ -94,10 +87,16 @@ export default function RemoveGroupModal({
             <Pressable
               onPress={handleConfirm}
               style={styles(colors, theme).confirm_btn}>
-              <Text style={styles(colors, theme).confirm_text}>{TEXT.Remove}</Text>
+              <Text style={styles(colors, theme).confirm_text}>
+                {TEXT.Remove}
+              </Text>
             </Pressable>
-            <Pressable onPress={handleExit} style={styles(colors, theme).cancel_btn}>
-              <Text style={styles(colors, theme).cancel_text}>{TEXT.Cancel}</Text>
+            <Pressable
+              onPress={handleExit}
+              style={styles(colors, theme).cancel_btn}>
+              <Text style={styles(colors, theme).cancel_text}>
+                {TEXT.Cancel}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -144,7 +143,8 @@ const styles = (colors, theme) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '90%'
+      width: '90%',
+      marginTop: 10
     },
     confirm_btn: {
       padding: 15,

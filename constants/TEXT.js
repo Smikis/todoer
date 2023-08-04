@@ -58,14 +58,14 @@ export const TEXT_LT = {
   Add_New_Button: {
     No_Group_Chosen: 'Nepasirinkta jokia grupė!',
     Group_Exists: 'Tokia grupė jau egzistuoja!',
-    Dropdown_1: {
-      Label: 'Pasirinkti pridėti'
-    },
-    Dropdown_2: {
-      Label: 'Pasirinkti grupę'
-    },
-    Task: 'Veikla',
-    Group: 'Grupė'
+    Add_Task: 'Pridėti veiklą',
+    Add_Group: 'Pridėti grupę',
+    Select_Group: 'Pasirinkti grupę...',
+    Title: 'Pavadinimas...',
+    Additional_Settings: 'Papildomi nustatymai',
+    Send_Notification: 'Atsiųsti priminimą',
+    Select_Date: 'Pasirinkite datą',
+    Repeat: 'Kartoti kasdien'
   },
   Remove_Group_Modal: {
     Remove_Text: 'Ar tikrai norite panaikinti'
@@ -90,7 +90,9 @@ export const TEXT_LT = {
   },
   DarkMode: 'Tamsus režimas',
   Guest: 'Svečias',
-  Continue_Without_Account: 'Tęsti be paskyros'
+  Continue_Without_Account: 'Tęsti be paskyros',
+  Continue_As_Guest: 'Tęsti kaip svečias',
+  Get_Started: 'Pradėti!'
 }
 export const TEXT_EN = {
   Screens: {
@@ -152,14 +154,14 @@ export const TEXT_EN = {
   Add_New_Button: {
     No_Group_Chosen: 'No group selected!',
     Group_Exists: 'Group already exists!',
-    Dropdown_1: {
-      Label: 'Choose to add'
-    },
-    Dropdown_2: {
-      Label: 'Choose group'
-    },
-    Task: 'Task',
-    Group: 'Group'
+    Add_Task: 'Add task',
+    Add_Group: 'Add group',
+    Select_Group: 'Select group...',
+    Title: 'Title...',
+    Additional_Settings: 'Additional settings',
+    Send_Notification: 'Send notification',
+    Select_Date: 'Select date',
+    Repeat: 'Repeat every day'
   },
   Remove_Group_Modal: {
     Remove_Text: 'Are you sure you want to remove'
@@ -184,5 +186,7 @@ export const TEXT_EN = {
   },
   DarkMode: 'Dark mode',
   Guest: 'Guest',
-  Continue_Without_Account: 'Continue without account'
+  Continue_Without_Account: 'Continue without account',
+  Continue_As_Guest: 'Continue as guest',
+  Get_Started: 'Get started!'
 }

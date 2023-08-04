@@ -14,7 +14,11 @@ import { getDoneTasks } from '../utils/getDoneTasks'
 import Task from './Task'
 import RemoveGroupModal from './RemoveGroupModal'
 import RemoveTaskModal from './RemoveTaskModal'
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
 
 const ordering = {
   0: 'byDateDESC',
@@ -36,11 +40,7 @@ const orderIcon = {
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon)
 
-export default function Group({
-  item,
-  index,
-  setStopScroll,
-}) {
+export default function Group({ item, index, setStopScroll }) {
   const [order, setOrder] = useState(item.order || 0)
 
   const {
@@ -49,7 +49,8 @@ export default function Group({
     sortTasks,
     colors,
     data,
-    TEXT
+    TEXT,
+    theme
   } = useContext(AppContext)
 
   const [removeModalVisible, setRemoveModalVisible] = useState(false)
@@ -65,7 +66,9 @@ export default function Group({
   })
 
   useEffect(() => {
-    chevronRotation.value = !item.collapsed ? withTiming(90, { duration: 200 }) : withTiming(0, { duration: 200 })
+    chevronRotation.value = !item.collapsed
+      ? withTiming(90, { duration: 200 })
+      : withTiming(0, { duration: 200 })
   }, [item.collapsed])
 
   const doneTasks = getDoneTasks(item.id, data)
@@ -101,58 +104,71 @@ export default function Group({
         task={chosenTask}
         from={item.id}
       />
-      <View style={[styles(colors).group, {
-        marginTop: index === 0 ? 15 : 0,
-      }]}>
-        <Pressable
-          style={{
-            marginRight: 15,
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}
-          onPress={() => toggleCollapsed(item.id)}>
-          <View style={styles(colors).group_header}>
-            <AnimatedIcon
-              style={[{ 
-                marginRight: 15,
-              }, chevronStyle]}
-              name={'chevron-right'}
-              size={40}
-              color={colors.Grey}
-            />
-            <Text style={styles(colors).group_text}>
-              {item.group.toUpperCase() + ` - ${doneTasks} / ${allTasks}`}
-            </Text>
-            <Icon
-              onPress={() => {
-                setOrder(order === 5 ? 0 : order + 1)
-              }}
-              name={orderIcon[order]}
-              size={30}
-              color={colors.Grey}
-              style={{
-                marginLeft: 15,
-                borderColor: colors.Grey,
-                borderWidth: 1,
-                borderRadius: 5
-              }}
-            />
-          </View>
+      <View
+        style={[
+          styles(colors).group,
+          {
+            marginTop: index === 0 ? 15 : 0,
+            marginBottom: index === data.groups.length - 1 ? 15 : 0
+          }
+        ]}>
+        {item.id !== 'default' && (
           <Pressable
-            onPress={() => {
-              setRemoveModalVisible(true)
+            style={{
+              marginRight: 15,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center'
             }}
-            style={styles(colors).remove_btn}>
-            <Text style={styles(colors).remove_btn_text}>{TEXT.Remove}</Text>
+            onPress={() => toggleCollapsed(item.id)}>
+            <View style={styles(colors).group_header}>
+              <AnimatedIcon
+                style={[
+                  {
+                    marginRight: 15
+                  },
+                  chevronStyle
+                ]}
+                name={'chevron-right'}
+                size={40}
+                color={theme === 'Dark' ? colors.White : colors.Black}
+              />
+              <Text style={styles(colors, theme).group_text}>
+                {item.group.toUpperCase() + ` - ${doneTasks}/${allTasks}`}
+              </Text>
+              <Icon
+                onPress={() => {
+                  setOrder(order === 5 ? 0 : order + 1)
+                }}
+                name={orderIcon[order]}
+                size={30}
+                color={theme === 'Dark' ? colors.White : colors.Black}
+                style={{
+                  marginLeft: 15,
+                  borderColor: theme === 'Dark' ? colors.White : colors.Black,
+                  borderWidth: 1,
+                  borderRadius: 5
+                }}
+              />
+            </View>
+            <Pressable
+              onPress={() => {
+                setRemoveModalVisible(true)
+              }}
+              style={styles(colors).remove_btn}>
+              <Text style={styles(colors).remove_btn_text}>{TEXT.Remove}</Text>
+            </Pressable>
           </Pressable>
-        </Pressable>
+        )}
         <GestureHandlerRootView>
           <DraggableFlatList
-            style={{ display: item.collapsed ? 'none' : 'flex' }}
+            style={{
+              display: item.collapsed ? 'none' : 'flex'
+            }}
             data={item.tasks ?? []}
-            renderItem={({ item: i, drag, index }) => renderTasks(i, drag, item, index)}
+            renderItem={({ item: i, drag, index }) =>
+              renderTasks(i, drag, item, index)
+            }
             keyExtractor={item => item.id}
             onDragBegin={() => setStopScroll(true)}
             onRelease={() => setStopScroll(false)}
@@ -167,22 +183,21 @@ export default function Group({
 Group.propTypes = {
   item: PropTypes.object,
   index: PropTypes.number,
-  setStopScroll: PropTypes.func,
+  setStopScroll: PropTypes.func
 }
 
-const styles = (colors) =>
+const styles = (colors, theme) =>
   StyleSheet.create({
     group: {
       display: 'flex',
-      flexDirection: 'column',
-      paddingBottom: 60,
+      flexDirection: 'column'
     },
     group_text: {
       fontSize: 20,
       fontWeight: 'bold',
       letterSpacing: 3,
-      color: colors.Grey,
-      flexShrink: 1,
+      color: theme === 'Dark' ? colors.White : colors.Black,
+      flexShrink: 1
     },
     group_header: {
       display: 'flex',

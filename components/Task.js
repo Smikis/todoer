@@ -11,7 +11,11 @@ import PropTypes from 'prop-types'
 import { getDueText } from '../utils/getDueText'
 import AppContext from '../contexts/AppContext'
 
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated'
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming
+} from 'react-native-reanimated'
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 
@@ -23,7 +27,7 @@ Task.propTypes = {
   group: PropTypes.object,
   index: PropTypes.number,
   setRemoveTaskModalVisible: PropTypes.func,
-  setChosenTask: PropTypes.func,
+  setChosenTask: PropTypes.func
 }
 
 export default function Task({
@@ -32,47 +36,21 @@ export default function Task({
   index,
   group,
   setRemoveTaskModalVisible,
-  setChosenTask,
+  setChosenTask
 }) {
   const dueIn =
     Math.ceil((item.due - Date.now()) / MILISECONDS_IN_A_DAY) ?? null
 
-  const {
-    toggleDone,
-    TEXT,
-    colors,
-    theme
-  } = useContext(AppContext)
-  
-  const opacity = useSharedValue(0)
-  const translateX = useSharedValue(-100)
-
-  const animStyle = useAnimatedStyle(() => {
-    return {
-      opacity: opacity.value,
-      transform: [
-        {
-          translateX: translateX.value
-        }
-      ]
-    }
-  })
-
-  useEffect(() => {
-    opacity.value = withTiming(1, { duration: 500, delay: index * 100 })
-    translateX.value = withTiming(0, { duration: 500, delay: index * 100 })
-  }, [])
+  const { toggleDone, TEXT, colors, theme } = useContext(AppContext)
 
   return (
     <ScaleDecorator>
       <AnimatedPressable
         onLongPress={drag}
-        style={animStyle}
         onPress={() => {
           if (item.repeating || (item.due - Date.now() <= 0 && item.due)) return
           toggleDone(group.id, item.id)
-        }}
-      >
+        }}>
         <View
           style={[
             styles(colors, theme).task,
@@ -82,36 +60,35 @@ export default function Task({
                   ? colors.Red
                   : colors.Primary,
               borderLeftColor:
-                item.isDone && !item.repeating
-                  ? colors.Green
-                  : colors.White
+                item.isDone && !item.repeating ? colors.Green : colors.White
             }
           ]}>
           <View style={{ flexShrink: 1 }}>
             <Text style={styles(colors, theme).task_text}>{item.value}</Text>
-            {((item.due || item.repeating) && !item.isDone) && <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingVertical: 10
-              }}>
-              <Icon
-                name={'clock-o'}
-                size={15}
-                color={colors.White}
-                style={{ marginRight: 5, marginLeft: 5 }}
-              />
-              {item.due && !item.isDone && !item.repeating ? (
-                <Text style={styles(colors, theme).due_text}>
-                  {getDueText(item.due, TEXT)}
-                </Text>
-              ) : item.repeating ? (
-                <Text style={styles(colors, theme).due_text}>
-                  {TEXT.Home.Repeating}
-                </Text>
-              ) : null}
-            </View>
-            }
+            {(item.due || item.repeating) && !item.isDone && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 10
+                }}>
+                <Icon
+                  name={'clock-o'}
+                  size={15}
+                  color={colors.White}
+                  style={{ marginRight: 5, marginLeft: 5 }}
+                />
+                {item.due && !item.isDone && !item.repeating ? (
+                  <Text style={styles(colors, theme).due_text}>
+                    {getDueText(item.due, TEXT)}
+                  </Text>
+                ) : item.repeating ? (
+                  <Text style={styles(colors, theme).due_text}>
+                    {TEXT.Home.Repeating}
+                  </Text>
+                ) : null}
+              </View>
+            )}
           </View>
           <View
             style={{
@@ -147,7 +124,7 @@ export default function Task({
   )
 }
 
-const styles = (colors) =>
+const styles = colors =>
   StyleSheet.create({
     task: {
       padding: 15,

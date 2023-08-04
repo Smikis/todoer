@@ -7,7 +7,8 @@ import {
   Pressable,
   ActivityIndicator,
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Image
 } from 'react-native'
 
 import { Link } from '@react-navigation/native'
@@ -21,7 +22,7 @@ export default function Login() {
   const { loginUserWithEmailAndPass, loginWithGoogle, continueAsGuest } =
     useAuth()
 
-  const { TEXT, colors, theme } = useContext(AppContext)
+  const { TEXT, colors } = useContext(AppContext)
 
   const [inputs, setInputs] = useState({
     email: '',
@@ -134,79 +135,75 @@ export default function Login() {
   }
 
   return (
-    <SafeAreaView style={styles(colors, theme).container}>
-      <StatusBar
-        backgroundColor={theme === 'Dark' ? colors.DarkGrey : colors.White}
-        barStyle={theme === 'Light' ? 'dark-content' : 'light-content'}
+    <SafeAreaView style={styles(colors).container}>
+      <StatusBar backgroundColor={colors.Primary} barStyle={'light-content'} />
+      <Image
+        source={require('../icons/play_store_512.png')}
+        style={{
+          width: 200,
+          height: 200,
+          resizeMode: 'contain'
+        }}
       />
-      <Text style={styles(colors, theme).header}>{TEXT.Login.Header}</Text>
+      <GoogleSigninButton onPress={handleGoogleLogin} />
+      <View style={styles(colors).separator_line}>
+        <Text style={styles(colors).separator_text}>{TEXT.Separator}</Text>
+      </View>
       {inputs.emailError && (
-        <Text style={styles(colors, theme).error}>{inputs.emailError}</Text>
+        <Text style={styles(colors).error}>{inputs.emailError}</Text>
       )}
       <TextInput
         value={inputs.email}
-        style={[
-          styles(colors, theme).input,
-          { shadowColor: inputs.emailError ? colors.Red : colors.Black }
-        ]}
+        style={styles(colors).input}
         onChangeText={text => setInputs(prev => ({ ...prev, email: text }))}
         placeholder={TEXT.Placeholders.Email}
         editable={!loading}
         keyboardType="email-address"
-        placeholderTextColor={colors.Grey}
+        placeholderTextColor={colors.LightBlue}
         onPressOut={clearErrors}
       />
       {inputs.passwordError && (
-        <Text style={styles(colors, theme).error}>{inputs.passwordError}</Text>
+        <Text style={styles(colors).error}>{inputs.passwordError}</Text>
       )}
       <TextInput
         value={inputs.password}
-        style={[
-          styles(colors, theme).input,
-          {
-            shadowColor: inputs.passwordError ? colors.Red : colors.Black
-          }
-        ]}
+        style={styles(colors).input}
         onChangeText={text => setInputs(prev => ({ ...prev, password: text }))}
         placeholder={TEXT.Placeholders.Password}
         secureTextEntry={true}
         editable={!loading}
-        placeholderTextColor={colors.Grey}
+        placeholderTextColor={colors.LightBlue}
         onPressOut={clearErrors}
       />
-      <Pressable style={styles(colors, theme).login_btn} onPress={validateInput}>
+      <Pressable style={styles(colors).login_btn} onPress={validateInput}>
         {loading ? (
           <>
             <ActivityIndicator
               style={{ marginRight: 15 }}
-              animating={loading}
               size={'small'}
-              color={'white'}
+              color={colors.Black}
             />
-            <Text style={styles(colors, theme).login_btn_text}>{TEXT.Loading}</Text>
+            <Text style={styles(colors).login_btn_text}>{TEXT.Loading}</Text>
           </>
         ) : (
-          <Text style={styles(colors, theme).login_btn_text}>
+          <Text style={styles(colors).login_btn_text}>
             {TEXT.Login.Sign_In}
           </Text>
         )}
       </Pressable>
-      <View style={styles(colors, theme).separator_line}>
-        <Text style={styles(colors, theme).separator_text}>{TEXT.Separator}</Text>
-      </View>
-      <GoogleSigninButton style={{ height: 60 }} onPress={handleGoogleLogin} />
+
       <View style={{ padding: 15 }}>
         <Link
           onPress={cleanup}
-          style={{ fontSize: 20, color: colors.Grey }}
+          style={{ fontSize: 20, color: colors.White }}
           to={{ screen: 'Register' }}>
           {TEXT.Login.Create_Account}
         </Link>
       </View>
       <Pressable
-        style={styles(colors, theme).continue_as_guest}
+        style={styles(colors).continue_as_guest}
         onPress={handleContinueAsGuest}>
-        <Text style={styles(colors, theme).continue_as_guest_text}>
+        <Text style={styles(colors).continue_as_guest_text}>
           {TEXT.Continue_Without_Account}
         </Text>
       </Pressable>
@@ -214,51 +211,45 @@ export default function Login() {
   )
 }
 
-const styles = (colors, theme) =>
+const styles = colors =>
   StyleSheet.create({
-    header: {
-      fontSize: 40,
-      margin: 15,
-      color: colors.Grey
-    },
     container: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       flex: 1,
-      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White
+      backgroundColor: colors.Primary,
+      padding: 15
     },
     input: {
       padding: 15,
-      width: '90%',
+      width: '100%',
       margin: 15,
-      borderRadius: 3,
       fontSize: 20,
-      color: theme === 'Dark' ? colors.White : colors.Black,
-      backgroundColor: theme === 'Dark' ? colors.LightDarkGrey : colors.White,
-      elevation: 5
+      color: colors.White,
+      borderBottomColor: colors.White,
+      borderBottomWidth: 2
     },
     login_btn: {
-      width: '90%',
+      width: '100%',
       alignItems: 'center',
-      backgroundColor: colors.Primary,
-      padding: 15,
-      borderRadius: 3,
-      display: 'flex',
-      flexDirection: 'row',
-      alignContent: 'center',
+      backgroundColor: colors.White,
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      borderRadius: 100,
       justifyContent: 'center',
-      elevation: 5,
+      alignItems: 'center',
+      flexDirection: 'row',
       marginTop: 15
     },
     login_btn_text: {
-      color: colors.White,
+      color: colors.Black,
       fontSize: 20
     },
     separator_line: {
       borderBottomWidth: 1,
-      borderBottomColor: colors.Grey,
-      width: '90%',
+      borderBottomColor: colors.White,
+      width: '100%',
       padding: 10,
       position: 'relative',
       alignItems: 'center',
@@ -268,9 +259,8 @@ const styles = (colors, theme) =>
     separator_text: {
       position: 'absolute',
       padding: 10,
-      backgroundColor: theme === 'Dark' ? colors.DarkGrey : colors.White,
-      display: 'flex',
-      color: colors.Grey,
+      backgroundColor: colors.Primary,
+      color: colors.White
     },
     error: {
       color: colors.Red,
@@ -281,7 +271,7 @@ const styles = (colors, theme) =>
       padding: 15
     },
     continue_as_guest_text: {
-      color: colors.Grey,
+      color: colors.White,
       fontSize: 17
     }
   })

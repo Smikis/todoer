@@ -20,6 +20,8 @@ import Toast from 'react-native-toast-message'
 
 import { COLORS as colors } from '../constants/COLORS'
 
+import SplashScreen from 'react-native-splash-screen'
+
 const AppContext = createContext()
 
 export function AppProvider({ children }) {
@@ -28,36 +30,70 @@ export function AppProvider({ children }) {
   const [loading, setLoading] = useState(false)
   const { readData, updateDb } = useDb()
   const { locale } = useLanguage()
-  const { user } = useAuth(() => setData)
+  const { user } = useAuth()
   const TEXT = getTextBasedOnLocale(locale)
   const { getItem, setItem } = useAsyncStorage('@user_theme')
+  const { getItem: getFirstLaunch, setItem: setFirstLaunchItem } =
+    useAsyncStorage('@first_launch')
+  const [firstLaunch, setFirstLaunch] = useState(null)
+
+  SplashScreen.hide()
 
   useEffect(() => {
     if (user) {
-      (async () => {
+      ;(async () => {
         try {
           setLoading(true)
           const initData = await readData()
           const user_theme = await getItem()
+
           if (user_theme !== null && user_theme !== theme) setTheme(user_theme)
           setData(initData)
+
           setLoading(false)
         } catch (e) {
           console.log(e)
         }
       })()
     }
+    if (firstLaunch === true) setFirstLaunch(false)
   }, [user])
 
   useEffect(() => {
-    (async () => await updateDb(data))()
+    ;(async () => await updateDb(data))()
   }, [data])
 
-  function appendGroup(inputText) {
+  useEffect(() => {
+    ;(async () => {
+      const fl = await getFirstLaunch()
+
+      if (!fl) {
+        setFirstLaunch(true)
+        setFirstLaunchItem('false')
+      } else {
+        setFirstLaunch(false)
+      }
+    })()
+  }, [])
+
+  useEffect(() => {
+    if (!groupExists('')) appendGroup('', true)
+  }, [loading])
+
+  function groupExists(inputText) {
+    try {
+      for (let group of data.groups) if (group.group === inputText) return true
+    } catch (e) {
+      console.log(e)
+    }
+    return false
+  }
+
+  function appendGroup(inputText, defaultGroup = false) {
     let temp = undefined
 
     const group = {
-      id: createUID(),
+      id: defaultGroup === false ? createUID() : 'default',
       group: inputText,
       tasks: [],
       collapsed: false,
@@ -128,7 +164,12 @@ export function AppProvider({ children }) {
     setData(temp)
   }
 
-  async function appendTask(groupId, inputText, dueDate, toggleRepeating) {
+  async function appendTask(
+    groupId = 'default',
+    inputText,
+    dueDate,
+    toggleRepeating
+  ) {
     let temp = JSON.parse(JSON.stringify(data))
 
     const index = temp.groups.findIndex(group => {
@@ -155,13 +196,14 @@ export function AppProvider({ children }) {
           temp.groups[index].tasks?.length === 0
         )
           temp.groups[index].tasks = [task]
-      } catch {
+      } catch (e) {
+        console.log(e)
         return 'error'
       }
     }
 
     if (dueDate) {
-      await onCreateTriggerNotification(
+      onCreateTriggerNotification(
         dueDate,
         taskId,
         inputText,
@@ -295,6 +337,7 @@ export function AppProvider({ children }) {
         TEXT,
         colors,
         theme,
+        firstLaunch,
         appendGroup,
         toggleDone,
         toggleCollapsed,
@@ -303,7 +346,10 @@ export function AppProvider({ children }) {
         removeGroup,
         removeTask,
         switchTheme,
-        sortTasks
+        sortTasks,
+        setFirstLaunch,
+        setLoading,
+        groupExists
       }}>
       {children}
     </AppContext.Provider>

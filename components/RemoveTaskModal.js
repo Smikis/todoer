@@ -14,12 +14,7 @@ RemoveTaskModal.propTypes = {
   from: PropTypes.string
 }
 
-export default function RemoveTaskModal({
-  visible,
-  setVisible,
-  task,
-  from
-}) {
+export default function RemoveTaskModal({ visible, setVisible, task, from }) {
   const { TEXT, colors, removeTask, theme } = useContext(AppContext)
 
   const handleExit = () => {
@@ -52,10 +47,7 @@ export default function RemoveTaskModal({
   }
 
   return (
-    <ModalView
-      visible={visible}
-      handleExit={handleExit}
-    >
+    <ModalView visible={visible} handleExit={handleExit}>
       <View style={styles(colors, theme).centeredView}>
         <View style={styles(colors, theme).modalView}>
           <Text style={styles(colors, theme).remove_text}>
@@ -68,12 +60,16 @@ export default function RemoveTaskModal({
             <Pressable
               style={styles(colors, theme).confirm_btn}
               onPress={() => handleConfirm()}>
-              <Text style={styles(colors, theme).confirm_text}>{TEXT.Confirm}</Text>
+              <Text style={styles(colors, theme).confirm_text}>
+                {TEXT.Confirm}
+              </Text>
             </Pressable>
             <Pressable
               style={styles(colors, theme).cancel_btn}
               onPress={() => handleExit()}>
-              <Text style={styles(colors, theme).cancel_text}>{TEXT.Cancel}</Text>
+              <Text style={styles(colors, theme).cancel_text}>
+                {TEXT.Cancel}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -114,7 +110,8 @@ const styles = (colors, theme) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      width: '90%'
+      width: '90%',
+      marginTop: 10
     },
     confirm_btn: {
       padding: 15,
@@ -137,5 +134,5 @@ const styles = (colors, theme) =>
     cancel_text: {
       color: theme === 'Dark' ? colors.White : colors.Black,
       fontSize: 15
-    },
+    }
   })
