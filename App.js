@@ -52,6 +52,7 @@ export default function App() {
               display: 'none'
             }
           }}
+          backBehavior="none"
           initialRouteName={
             firstLaunch ? 'FirstLaunch' : user ? 'Home' : 'Login'
           }>

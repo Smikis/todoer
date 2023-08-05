@@ -70,7 +70,8 @@ export default function Task({
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  paddingVertical: 10
+                  paddingVertical: 10,
+                  flexShrink: 1
                 }}>
                 <Icon
                   name={'clock-o'}
@@ -97,7 +98,8 @@ export default function Task({
               borderLeftColor: colors.White,
               borderLeftWidth: 1,
               height: '100%',
-              paddingLeft: 20
+              paddingLeft: 20,
+              marginLeft: 20
             }}>
             {(!item.repeating && item.due - Date.now() >= 0) || !item.due ? (
               <Icon
@@ -127,8 +129,8 @@ export default function Task({
 const styles = colors =>
   StyleSheet.create({
     task: {
-      padding: 15,
-      paddingLeft: 10,
+      paddingVertical: 15,
+      paddingHorizontal: 10,
       backgroundColor: colors.Primary,
       borderRadius: 3,
       elevation: 5,
@@ -145,7 +147,8 @@ const styles = colors =>
     task_text: {
       color: colors.White,
       fontSize: 17,
-      paddingHorizontal: 5
+      paddingLeft: 5,
+      flexShrink: 1
     },
     due_text: {
       color: colors.White,

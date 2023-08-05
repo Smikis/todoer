@@ -55,8 +55,8 @@ export function AppProvider({ children }) {
           console.log(e)
         }
       })()
+      if (firstLaunch === true) setFirstLaunch(false)
     }
-    if (firstLaunch === true) setFirstLaunch(false)
   }, [user])
 
   useEffect(() => {
@@ -67,7 +67,7 @@ export function AppProvider({ children }) {
     ;(async () => {
       const fl = await getFirstLaunch()
 
-      if (!fl) {
+      if (fl === null && !user) {
         setFirstLaunch(true)
         setFirstLaunchItem('false')
       } else {

@@ -52,6 +52,7 @@ export default function AddNewGroupView({ handleExit }) {
         style={styles(colors, theme).input}
         placeholder={TEXT.Add_New_Button.Title}
         placeholderTextColor={colors.Grey}
+        allowFontScaling={false}
         onChangeText={setInputText}
         value={inputText}
         onPressOut={() => setError(null)}

@@ -78,7 +78,9 @@ export default function SideBar() {
               )
             ) : null}
           </View>
-          <Text style={styles(colors, theme).username_style}>
+          <Text
+            allowFontScaling={false}
+            style={styles(colors, theme).username_style}>
             {user
               ? user.displayName
                 ? user.displayName.toUpperCase()
@@ -104,10 +106,11 @@ export default function SideBar() {
           }}>
           {loading ? (
             <>
-              <ActivityIndicator size={30} color={colors.White} />
+              <ActivityIndicator size={25} color={colors.White} />
               <Text
+                allowFontScaling={false}
                 style={{
-                  fontSize: 20,
+                  fontSize: 15,
                   color: colors.White,
                   fontWeight: 'bold',
                   textTransform: 'uppercase'
@@ -117,10 +120,11 @@ export default function SideBar() {
             </>
           ) : (
             <>
-              <Icon name="sign-out" color={colors.White} size={30} />
+              <Icon name="sign-out" color={colors.White} size={25} />
               <Text
+                allowFontScaling={false}
                 style={{
-                  fontSize: 20,
+                  fontSize: 15,
                   color: colors.White,
                   fontWeight: 'bold',
                   textTransform: 'uppercase'

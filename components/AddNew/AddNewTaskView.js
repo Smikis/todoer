@@ -124,6 +124,7 @@ export default function AddNewTaskView({ handleExit }) {
         style={styles(colors, theme).input}
         placeholder={TEXT.Add_New_Button.Title}
         placeholderTextColor={colors.Grey}
+        allowFontScaling={false}
         onChangeText={text =>
           setTaskViewData(prev => ({ ...prev, inputText: text }))
         }
