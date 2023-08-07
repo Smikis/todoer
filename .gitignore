@@ -1,6 +1,3 @@
-google-services.json
-constants/
-
 # OSX
 #
 .DS_Store
@@ -34,6 +31,9 @@ local.properties
 *.iml
 *.hprof
 
+google-services.json
+constants/CONSTANTS.js
+
 # node.js
 #
 node_modules/
@@ -64,3 +64,4 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
+node_modules
