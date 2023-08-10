@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
   Dimensions,
+  Keyboard,
   Pressable,
   StyleSheet,
   Text,
@@ -33,8 +34,7 @@ import Animated, {
 const AnimatedIcon = Animated.createAnimatedComponent(Icon)
 
 export default function AddNewTaskView({ handleExit }) {
-  const { colors, theme, data, TEXT, appendTask, groupExists, appendGroup } =
-    useContext(AppContext)
+  const { colors, theme, data, TEXT, appendTask } = useContext(AppContext)
   const { width } = Dimensions.get('window')
   const [taskViewData, setTaskViewData] = useState({
     inputText: '',
@@ -131,46 +131,48 @@ export default function AddNewTaskView({ handleExit }) {
         onPressOut={() => setTaskViewData(prev => ({ ...prev, error: null }))}
         value={taskViewData.inputText}
       />
-      <Dropdown
-        style={styles(colors, theme).dropdown}
-        placeholderStyle={{ color: colors.Grey, fontSize: 15 }}
-        selectedTextStyle={{
-          color: theme === 'Dark' ? colors.White : colors.Black,
-          fontSize: 15,
-          paddingHorizontal: 8
-        }}
-        data={taskViewData.groups}
-        labelField="label"
-        valueField="value"
-        placeholder={TEXT.Add_New_Button.Select_Group}
-        showsVerticalScrollIndicator={false}
-        containerStyle={{
-          backgroundColor:
-            theme === 'Dark' ? colors.LightDarkGrey : colors.White,
-          paddingHorizontal: 15
-        }}
-        renderItem={item => (
-          <View
-            style={{
-              height: 50,
-              display: item.label === '' ? 'none' : 'flex',
-              justifyContent: 'center',
-              backgroundColor:
-                theme === 'Dark' ? colors.LightDarkGrey : colors.White
-            }}>
-            <Text
+      {taskViewData.groups.length > 1 && (
+        <Dropdown
+          style={styles(colors, theme).dropdown}
+          placeholderStyle={{ color: colors.Grey, fontSize: 15 }}
+          selectedTextStyle={{
+            color: theme === 'Dark' ? colors.White : colors.Black,
+            fontSize: 15,
+            paddingHorizontal: 8
+          }}
+          data={taskViewData.groups}
+          labelField="label"
+          valueField="value"
+          placeholder={TEXT.Add_New_Button.Select_Group}
+          showsVerticalScrollIndicator={false}
+          containerStyle={{
+            backgroundColor:
+              theme === 'Dark' ? colors.LightDarkGrey : colors.White,
+            paddingHorizontal: 15
+          }}
+          renderItem={item => (
+            <View
               style={{
-                color: theme === 'Dark' ? colors.White : colors.Black,
-                fontSize: 15
+                height: 50,
+                display: item.label === '' ? 'none' : 'flex',
+                justifyContent: 'center',
+                backgroundColor:
+                  theme === 'Dark' ? colors.LightDarkGrey : colors.White
               }}>
-              {item.label}
-            </Text>
-          </View>
-        )}
-        onChange={item => {
-          setTaskViewData(prev => ({ ...prev, groupChosenId: item.value }))
-        }}
-      />
+              <Text
+                style={{
+                  color: theme === 'Dark' ? colors.White : colors.Black,
+                  fontSize: 15
+                }}>
+                {item.label}
+              </Text>
+            </View>
+          )}
+          onChange={item => {
+            setTaskViewData(prev => ({ ...prev, groupChosenId: item.value }))
+          }}
+        />
+      )}
       <Pressable
         style={{
           width: '100%',
@@ -179,12 +181,13 @@ export default function AddNewTaskView({ handleExit }) {
           marginTop: 10,
           marginBottom: 20
         }}
-        onPress={() =>
+        onPress={() => {
           setTaskViewData(prev => ({
             ...taskViewData,
             additionalSettingsShown: !prev.additionalSettingsShown
           }))
-        }>
+          Keyboard.dismiss()
+        }}>
         <View
           style={{
             width: 30,

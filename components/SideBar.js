@@ -5,7 +5,8 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  Linking
 } from 'react-native'
 import React, { useContext, useState } from 'react'
 import AppContext from '../contexts/AppContext'
@@ -34,8 +35,8 @@ export default function SideBar() {
         style={{
           height: '100%',
           alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '40%',
+          justifyContent: 'space-around',
+          width: '45%',
           paddingVertical: 20
         }}>
         <View
@@ -46,37 +47,34 @@ export default function SideBar() {
             alignItems: 'center'
           }}>
           <View style={styles(colors, theme).pfp}>
-            {user ? (
-              user.photoURL ? (
-                <Image
-                  source={{ uri: user.photoURL }}
-                  style={{
-                    height: 100,
-                    width: 100,
-                    borderRadius: 100,
-                    overflow: 'hidden'
-                  }}
+            {user?.photoURL ? (
+              <Image
+                source={{ uri: user?.photoURL }}
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 100,
+                  overflow: 'hidden'
+                }}
+              />
+            ) : (
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  borderRadius: 100,
+                  overflow: 'hidden',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                <Icon
+                  style={styles(colors, theme).icon_style}
+                  name="user-o"
+                  color={colors.White}
+                  size={70}
                 />
-              ) : (
-                <View
-                  style={{
-                    height: 100,
-                    width: 100,
-                    borderRadius: 100,
-                    overflow: 'hidden',
-                    justifyContent: 'center',
-                    alignItems: 'center'
-                  }}>
-                  <View style={styles(colors, theme).profile_circle} />
-                  <Icon
-                    style={styles(colors, theme).icon_style}
-                    name="user-o"
-                    color={colors.White}
-                    size={70}
-                  />
-                </View>
-              )
-            ) : null}
+              </View>
+            )}
           </View>
           <Text
             allowFontScaling={false}
@@ -91,6 +89,31 @@ export default function SideBar() {
           </Text>
         </View>
         <Pressable
+          onPress={() => {
+            Linking.openURL('https://www.buymeacoffee.com/redas.dev')
+          }}
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            width: '100%',
+            borderRadius: 10,
+            backgroundColor: colors.White,
+            padding: 10
+          }}>
+          <Icon name="dollar" color={colors.Black} size={25} />
+          <Text
+            allowFontScaling={false}
+            style={{
+              fontSize: 15,
+              color: colors.Black,
+              fontWeight: 'bold',
+              textTransform: 'uppercase'
+            }}>
+            {TEXT.Donate}
+          </Text>
+        </Pressable>
+        <Pressable
           onPress={async () => {
             setLoading(true)
             await logout()
@@ -102,16 +125,19 @@ export default function SideBar() {
             flexDirection: 'row',
             justifyContent: 'space-around',
             alignItems: 'center',
-            width: '100%'
+            borderRadius: 10,
+            backgroundColor: colors.White,
+            width: '100%',
+            padding: 10
           }}>
           {loading ? (
             <>
-              <ActivityIndicator size={25} color={colors.White} />
+              <ActivityIndicator size={20} color={colors.Black} />
               <Text
                 allowFontScaling={false}
                 style={{
                   fontSize: 15,
-                  color: colors.White,
+                  color: colors.Black,
                   fontWeight: 'bold',
                   textTransform: 'uppercase'
                 }}>
@@ -120,12 +146,12 @@ export default function SideBar() {
             </>
           ) : (
             <>
-              <Icon name="sign-out" color={colors.White} size={25} />
+              <Icon name="sign-out" color={colors.Black} size={25} />
               <Text
                 allowFontScaling={false}
                 style={{
                   fontSize: 15,
-                  color: colors.White,
+                  color: colors.Black,
                   fontWeight: 'bold',
                   textTransform: 'uppercase'
                 }}>
@@ -141,17 +167,13 @@ export default function SideBar() {
 
 const styles = colors =>
   StyleSheet.create({
-    profile_circle: {
-      backgroundColor: colors.Grey,
+    icon_style: {
+      color: colors.White,
+      borderRadius: 100,
+      padding: 10,
       width: 100,
       height: 100,
-      borderRadius: 100,
-      position: 'absolute',
-      elevation: 5
-    },
-    icon_style: {
-      position: 'relative',
-      elevation: 6
+      textAlign: 'center'
     },
     username_style: {
       fontSize: 30,

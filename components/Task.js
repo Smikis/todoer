@@ -11,11 +11,7 @@ import PropTypes from 'prop-types'
 import { getDueText } from '../utils/getDueText'
 import AppContext from '../contexts/AppContext'
 
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming
-} from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable)
 

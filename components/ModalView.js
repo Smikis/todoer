@@ -21,8 +21,8 @@ export default function ModalView({ visible, handleExit, children }) {
           position: 'absolute',
           top: 0,
           left: 0,
-          bottom: 0,
-          right: 0
+          right: 0,
+          bottom: 0
         }}
         blurType={theme === 'Dark' ? 'dark' : 'light'}
         blurAmount={1}

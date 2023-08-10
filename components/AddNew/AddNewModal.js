@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { View, Text, Pressable, StyleSheet, Keyboard } from 'react-native'
 
 import AppContext from '../../contexts/AppContext'
 
@@ -65,13 +65,17 @@ export default function AddNewModal({ visible, changeVisibility }) {
               </Text>
             </AnimatedPressable>
           </View>
-          <View style={{ width: '100%', padding: 20 }}>
+          <Pressable
+            onPress={() => {
+              Keyboard.dismiss()
+            }}
+            style={{ width: '100%', padding: 20 }}>
             {focused === 0 ? (
               <AddNewTaskView handleExit={handleExit} />
             ) : (
               <AddNewGroupView handleExit={handleExit} />
             )}
-          </View>
+          </Pressable>
         </View>
       </View>
     </ModalView>

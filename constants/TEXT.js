@@ -92,7 +92,8 @@ export const TEXT_LT = {
   Guest: 'Svečias',
   Continue_Without_Account: 'Tęsti be paskyros',
   Continue_As_Guest: 'Tęsti kaip svečias',
-  Get_Started: 'Pradėti!'
+  Get_Started: 'Pradėti!',
+  Donate: 'Parama'
 }
 export const TEXT_EN = {
   Screens: {
@@ -188,5 +189,6 @@ export const TEXT_EN = {
   Guest: 'Guest',
   Continue_Without_Account: 'Continue without account',
   Continue_As_Guest: 'Continue as guest',
-  Get_Started: 'Get started!'
+  Get_Started: 'Get started!',
+  Donate: 'Donate'
 }
