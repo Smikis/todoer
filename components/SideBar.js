@@ -5,8 +5,7 @@ import {
   Image,
   Pressable,
   StyleSheet,
-  ActivityIndicator,
-  Linking
+  ActivityIndicator
 } from 'react-native'
 import React, { useContext, useState } from 'react'
 import AppContext from '../contexts/AppContext'
@@ -29,13 +28,14 @@ export default function SideBar() {
         flex: 1,
         backgroundColor: colors.Primary,
         justifyContent: 'flex-start',
-        padding: 20
+        paddingHorizontal: 25,
+        paddingVertical: 20
       }}>
       <View
         style={{
           height: '100%',
           alignItems: 'center',
-          justifyContent: 'space-around',
+          justifyContent: 'space-between',
           width: '45%',
           paddingVertical: 20
         }}>
@@ -88,31 +88,6 @@ export default function SideBar() {
               : null}
           </Text>
         </View>
-        <Pressable
-          onPress={() => {
-            Linking.openURL('https://www.buymeacoffee.com/redas.dev')
-          }}
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-around',
-            alignItems: 'center',
-            width: '100%',
-            borderRadius: 10,
-            backgroundColor: colors.White,
-            padding: 10
-          }}>
-          <Icon name="dollar" color={colors.Black} size={25} />
-          <Text
-            allowFontScaling={false}
-            style={{
-              fontSize: 15,
-              color: colors.Black,
-              fontWeight: 'bold',
-              textTransform: 'uppercase'
-            }}>
-            {TEXT.Donate}
-          </Text>
-        </Pressable>
         <Pressable
           onPress={async () => {
             setLoading(true)
