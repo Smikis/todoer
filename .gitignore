@@ -1,3 +1,6 @@
+google-services.json
+constants/CONSTANTS.js
+
 # OSX
 #
 .DS_Store
@@ -30,21 +33,15 @@ build/
 local.properties
 *.iml
 *.hprof
-
-google-services.json
-constants/CONSTANTS.js
+.cxx/
+*.keystore
+!debug.keystore
 
 # node.js
 #
 node_modules/
 npm-debug.log
 yarn-error.log
-
-# BUCK
-buck-out/
-\.buckd/
-*.keystore
-!debug.keystore
 
 # fastlane
 #
@@ -64,4 +61,9 @@ buck-out/
 # Ruby / CocoaPods
 /ios/Pods/
 /vendor/bundle/
-node_modules
+
+# Temporary files created by Metro to check the health of the file watcher
+.metro-health-check*
+
+# testing
+/coverage
